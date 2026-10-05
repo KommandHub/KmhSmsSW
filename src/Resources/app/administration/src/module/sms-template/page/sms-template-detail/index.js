@@ -151,6 +151,8 @@ Component.register('kmh-sms-template-detail', {
         loadTemplate() {
             if (!this.templateId) {
                 this.smsTemplate = this.repository.create(Shopware.Context.api);
+                // Match the DB default; an off switch here saves a template that never sends.
+                this.smsTemplate.active = true;
 
                 return;
             }

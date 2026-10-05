@@ -31,7 +31,8 @@
         "hint": "Sendet die ausgewählte Vorlage an den Kunden dieses Flows. Hat der Kunde keine verwendbare Mobilnummer, wird die SMS übersprungen und der Rest des Flows – einschließlich der E-Mail – läuft weiter.",
         "labelTemplate": "SMS-Vorlage",
         "placeholderTemplate": "SMS-Vorlage auswählen…"
-      }
+      },
+      "descriptionWithTemplate": "Sendet die SMS-Vorlage „{name}“ an die Mobilnummer des Kunden."
     }
   },
   "sw-privileges": {
@@ -40,6 +41,11 @@
         "label": "SMS for Shopware 6",
         "manage": "Manage"
       }
+    }
+  },
+  "global": {
+    "entities": {
+      "kmh_sms_template": "SMS-Vorlage | SMS-Vorlagen"
     }
   }
 }

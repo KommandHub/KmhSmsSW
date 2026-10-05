@@ -31,7 +31,8 @@
         "hint": "Sends the selected template to the customer this flow is about. If the customer has no usable mobile number, the SMS is skipped and the rest of the flow — including the email — still runs.",
         "labelTemplate": "SMS template",
         "placeholderTemplate": "Select an SMS template…"
-      }
+      },
+      "descriptionWithTemplate": "Sends the SMS template \"{name}\" to the customer's mobile number."
     }
   },
   "sw-privileges": {
@@ -40,6 +41,11 @@
         "label": "SMS for Shopware 6",
         "manage": "Manage"
       }
+    }
+  },
+  "global": {
+    "entities": {
+      "kmh_sms_template": "SMS template | SMS templates"
     }
   }
 }
