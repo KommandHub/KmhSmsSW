@@ -126,7 +126,7 @@ class TestMessageService
         $criteria = new Criteria([$templateId]);
         $criteria->addAssociation('translations');
 
-        $template = $this->templateRepository->search($criteria, $context)->first();
+        $template = $this->templateRepository->search($criteria, $context)->getEntities()->first();
 
         return $template instanceof SmsTemplateEntity ? $template : null;
     }

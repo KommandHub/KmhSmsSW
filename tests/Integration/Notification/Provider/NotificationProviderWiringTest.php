@@ -99,8 +99,8 @@ class NotificationProviderWiringTest extends TestCase
 
         if (!$container->has($id)) {
             static::markTestSkipped(sprintf(
-                'KommandhubSmsSW is not active in the test database, so "%s" is not in the container. '
-                . 'Activate it first: bin/console plugin:install --activate KommandhubSmsSW '
+                'KmhSmsSW is not active in the test database, so "%s" is not in the container. '
+                . 'Activate it first: bin/console plugin:install --activate KmhSmsSW '
                 . '(with DATABASE_URL pointing at the *_test database).',
                 $id,
             ));

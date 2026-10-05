@@ -151,12 +151,13 @@ class AfricasTalkingProvider extends AbstractHttpNotificationProvider
     private function extractMessageId(array $decoded): ?string
     {
         $smsMessageData = $decoded['SMSMessageData'] ?? null;
-        $recipients = \is_array($smsMessageData) ? ($smsMessageData['Recipients'] ?? []) : [];
+        $smsMessageData = \is_array($smsMessageData) ? $smsMessageData : [];
+        $recipients = $smsMessageData['Recipients'] ?? [];
 
         if (!\is_array($recipients) || $recipients === []) {
             // No recipient entry at all means nothing was queued; the envelope
             // message explains why (commonly an unrecognised sender ID).
-            $message = \is_array($smsMessageData) ? ($smsMessageData['Message'] ?? null) : null;
+            $message = $smsMessageData['Message'] ?? null;
 
             throw new PermanentProviderException(sprintf(
                 "Africa's Talking accepted no recipients: %s",

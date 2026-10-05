@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
@@ -72,10 +73,11 @@ class DialCodeExtensionTest extends TestCase
         $salesChannel->method('getCountryId')->willReturn('country-1');
 
         $country = new CountryEntity();
+        $country->setId('country-1');
         $country->setIso('NG');
 
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn($country);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection([$country]));
 
         $this->countryRepository->expects($this->once())
             ->method('search')
@@ -98,7 +100,7 @@ class DialCodeExtensionTest extends TestCase
         $salesChannel->method('getCountryId')->willReturn('country-1');
 
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn(null);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection());
 
         $this->countryRepository->method('search')->willReturn($searchResult);
 

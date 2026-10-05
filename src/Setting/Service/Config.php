@@ -8,7 +8,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class Config
 {
-    public const KEY = 'KommandhubSmsSW.config.';
+    public const KEY = 'KmhSmsSW.config.';
 
     /**
      * @param SystemConfigService $systemConfigService Shopware system config service.
