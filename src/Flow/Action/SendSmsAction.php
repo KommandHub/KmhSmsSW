@@ -44,7 +44,7 @@ class SendSmsAction extends FlowAction implements DelayableAction
 
     public static function getName(): string
     {
-        return 'action.kommandhub.send.sms';
+        return 'action.kmh.send.sms';
     }
 
     /**

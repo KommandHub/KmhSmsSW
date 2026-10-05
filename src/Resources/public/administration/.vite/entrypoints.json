@@ -1,13 +1,13 @@
 {
-  "base": "/bundles/kommandhubsmssw/administration/",
+  "base": "/bundles/kmhsmssw/administration/",
   "entryPoints": {
-    "kommandhub-sms-s-w": {
+    "kmh-sms-s-w": {
       "css": [
-        "/bundles/kommandhubsmssw/administration/assets/kommandhub-sms-s-w-omfAZP90.css"
+        "/bundles/kmhsmssw/administration/assets/kmh-sms-s-w-CKzpNJbv.css"
       ],
       "dynamic": [],
       "js": [
-        "/bundles/kommandhubsmssw/administration/assets/kommandhub-sms-s-w-CMVj0wm1.js"
+        "/bundles/kmhsmssw/administration/assets/kmh-sms-s-w-CdlP5YVM.js"
       ],
       "legacy": false,
       "preload": []

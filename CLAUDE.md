@@ -1,4 +1,4 @@
-# KommandhubSmsSW
+# KmhSmsSW
 
 Transactional SMS for Shopware 6, sent alongside core email, with multi-provider
 direct-carrier routing for African networks.
@@ -8,7 +8,7 @@ PHP namespace root: `Kommandhub\SmsSW\` → `src/`.
 ## Commands
 
 All commands run inside the Docker dev stack (see `Makefile`). The plugin lives
-at `custom/static-plugins/KommandhubSmsSW` inside a Shopware install.
+at `custom/static-plugins/KmhSmsSW` inside a Shopware install.
 
 - `make up` / `make down` — start / tear down the stack
 - `make test` — PHPUnit (`phpunit.dist.xml`). Filter: `make test FILTER=SomeTest`
@@ -61,10 +61,10 @@ Cross-cutting, always present:
 - **SMS only.** WhatsApp was removed: business-initiated messages may only use
   provider-approved templates, and every vendor models those differently. Adding
   it back needs a template-aware provider contract, not another channel enum.
-- **DAL tables and entity names carry the `kommandhub_` prefix.**
-  `kommandhub_sms_template`, not `sms_template` — the DAL namespace is global
+- **DAL tables and entity names carry the `kmh_` prefix.**
+  `kmh_sms_template`, not `sms_template` — the DAL namespace is global
   and shared with every other plugin. The translation's foreign-key property
-  follows from the parent entity name (`kommandhubSmsTemplateId`), so it is not
+  follows from the parent entity name (`kmhSmsTemplateId`), so it is not
   decoration that can be trimmed.
 - **Provider settings are namespaced** `<providerName><Setting>` and built only
   through `ProviderSettings::key()`. A provider reads its own settings with

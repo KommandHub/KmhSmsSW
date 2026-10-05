@@ -1,4 +1,4 @@
-import { SEND_SMS_ACTION, SEND_SMS_ACTION_KEY } from '../constant/kommandhub-sms.constant';
+import { SEND_SMS_ACTION, SEND_SMS_ACTION_KEY } from '../constant/kmh-sms.constant';
 
 /**
  * Registers the Send SMS action with the flow builder.
@@ -27,7 +27,7 @@ Shopware.Application.addServiceProviderDecorator('flowBuilderService', (flowBuil
     });
 
     flowBuilderService.addLabels({
-        [SEND_SMS_ACTION_KEY]: 'kommandhub-sms.flowAction.label',
+        [SEND_SMS_ACTION_KEY]: 'kmh-sms.flowAction.label',
     });
 
     flowBuilderService.addActionGroupMapping({
@@ -39,7 +39,7 @@ Shopware.Application.addServiceProviderDecorator('flowBuilderService', (flowBuil
          * Shown on the sequence card once the action is configured. The default
          * would print the raw template UUID, which tells a merchant nothing.
          */
-        [SEND_SMS_ACTION]: (context) => context.translator.$tc('kommandhub-sms.flowAction.description'),
+        [SEND_SMS_ACTION]: (context) => context.translator.$tc('kmh-sms.flowAction.description'),
     });
 
     return flowBuilderService;

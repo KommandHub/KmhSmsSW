@@ -5,23 +5,23 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: 'kommandhub-sms-plugin:6.7.8.0'
-    container_name: kommandhub-sms-plugin
+    image: 'kmh-sms-plugin:6.7.8.0'
+    container_name: kmh-sms-plugin
     environment:
       - 'XDEBUG_ENABLED=0'
       - 'PHP_VERSION=8.3'
     volumes:
       # ----------------------------------------------------------------------------------------------------------------------------------
       # PLUGINS
-      - "./:/var/www/html/custom/static-plugins/KommandhubSmsSW"
+      - "./:/var/www/html/custom/static-plugins/KmhSmsSW"
       - "database:/var/lib/mysql"
       - "./Makefile:/var/www/html/Makefile"
       # - ".env.test:/var/www/html/.env.test"
       # ----------------------------------------------------------------------------------------------------------------------------------
       # EXCLUDE
-      - "/var/www/html/custom/static-plugins/KommandhubSmsSW/.git/"
-      - "/var/www/html/custom/static-plugins/KommandhubSmsSW/node_modules/"
-      - "/var/www/html/custom/static-plugins/KommandhubSmsSW/vendor/"
+      - "/var/www/html/custom/static-plugins/KmhSmsSW/.git/"
+      - "/var/www/html/custom/static-plugins/KmhSmsSW/node_modules/"
+      - "/var/www/html/custom/static-plugins/KmhSmsSW/vendor/"
       # ----------------------------------------------------------------------------------------------------------------------------------
 
 volumes:

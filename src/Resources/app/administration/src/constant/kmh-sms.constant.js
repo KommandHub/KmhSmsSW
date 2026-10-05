@@ -6,13 +6,13 @@
  *
  * Derivations the flow builder performs on this string (see core's
  * flow-builder.service.ts):
- * - modal component:  action.kommandhub.send.sms -> sw-flow-kommandhub-send-sms-modal
- * - icon/label key:   kommandhubSendSms
+ * - modal component:  action.kmh.send.sms -> sw-flow-kmh-send-sms-modal
+ * - icon/label key:   kmhSendSms
  */
-export const SEND_SMS_ACTION = 'action.kommandhub.send.sms';
+export const SEND_SMS_ACTION = 'action.kmh.send.sms';
 
 /**
  * Key the icon and label are registered under — the service builds it from the
  * action name segments after "action.", camel-cased.
  */
-export const SEND_SMS_ACTION_KEY = 'kommandhubSendSms';
+export const SEND_SMS_ACTION_KEY = 'kmhSendSms';

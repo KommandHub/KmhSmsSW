@@ -2,7 +2,7 @@ const PluginManager = window.PluginManager;
 
 // Lazily imported so the bundle only loads on pages that render a phone field.
 PluginManager.register(
-    'KommandhubDialCodePhone',
+    'KmhDialCodePhone',
     () => import('./dial-code-phone/dial-code-phone.plugin'),
-    '[data-kommandhub-dial-code-phone]'
+    '[data-kmh-dial-code-phone]'
 );

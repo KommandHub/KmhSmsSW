@@ -5,7 +5,7 @@ import { measure } from '../../util/sms-segments';
 const { Component, Mixin, Data } = Shopware;
 const { Criteria } = Data;
 
-Component.register('kommandhub-sms-template-detail', {
+Component.register('kmh-sms-template-detail', {
     template,
 
     inject: ['repositoryFactory', 'acl'],
@@ -39,7 +39,7 @@ Component.register('kommandhub-sms-template-detail', {
         },
 
         repository() {
-            return this.repositoryFactory.create('kommandhub_sms_template');
+            return this.repositoryFactory.create('kmh_sms_template');
         },
 
         criteria() {
@@ -110,20 +110,20 @@ Component.register('kommandhub-sms-template-detail', {
 
             if (!this.templateId) {
                 return {
-                    message: this.$t('kommandhub-sms-template.detail.tooltipTestUnsaved'),
+                    message: this.$t('kmh-sms-template.detail.tooltipTestUnsaved'),
                     showOnDisabledElements: true,
                 };
             }
 
             if (!this.smsTemplate?.content?.trim()) {
                 return {
-                    message: this.$t('kommandhub-sms-template.detail.tooltipTestNoContent'),
+                    message: this.$t('kmh-sms-template.detail.tooltipTestNoContent'),
                     showOnDisabledElements: true,
                 };
             }
 
             return {
-                message: this.$t('kommandhub-sms-template.detail.tooltipTestSaved'),
+                message: this.$t('kmh-sms-template.detail.tooltipTestSaved'),
                 showOnDisabledElements: true,
             };
         },
@@ -164,7 +164,7 @@ Component.register('kommandhub-sms-template-detail', {
                 })
                 .catch(() => {
                     this.createNotificationError({
-                        message: this.$tc('kommandhub-sms-template.detail.messageLoadError'),
+                        message: this.$tc('kmh-sms-template.detail.messageLoadError'),
                     });
                 })
                 .finally(() => {
@@ -189,15 +189,15 @@ Component.register('kommandhub-sms-template-detail', {
          */
         validate() {
             if (!this.smsTemplate.mailTemplateTypeId) {
-                return 'kommandhub-sms-template.detail.messageEventRequired';
+                return 'kmh-sms-template.detail.messageEventRequired';
             }
 
             if (!this.smsTemplate.name?.trim()) {
-                return 'kommandhub-sms-template.detail.messageNameRequired';
+                return 'kmh-sms-template.detail.messageNameRequired';
             }
 
             if (!this.smsTemplate.content?.trim()) {
-                return 'kommandhub-sms-template.detail.messageContentRequired';
+                return 'kmh-sms-template.detail.messageContentRequired';
             }
 
             return null;
@@ -221,14 +221,14 @@ Component.register('kommandhub-sms-template-detail', {
                     this.isSaveSuccessful = true;
 
                     this.createNotificationSuccess({
-                        message: this.$tc('kommandhub-sms-template.detail.messageSaveSuccess'),
+                        message: this.$tc('kmh-sms-template.detail.messageSaveSuccess'),
                     });
 
                     // A newly created record has no route id yet, so replace the
                     // create route with the detail route for the saved entity.
                     if (!this.templateId) {
                         this.$router.push({
-                            name: 'kommandhub.sms.template.detail',
+                            name: 'kmh.sms.template.detail',
                             params: { id: this.smsTemplate.id },
                         });
 
@@ -240,7 +240,7 @@ Component.register('kommandhub-sms-template-detail', {
                 .catch((e) => {
                   console.error(e);
                     this.createNotificationError({
-                        message: this.$tc('kommandhub-sms-template.detail.messageSaveError'),
+                        message: this.$tc('kmh-sms-template.detail.messageSaveError'),
                     });
                 })
                 .finally(() => {
@@ -257,7 +257,7 @@ Component.register('kommandhub-sms-template-detail', {
         },
 
         onCancel() {
-            this.$router.push({ name: 'kommandhub.sms.template.index' });
+            this.$router.push({ name: 'kmh.sms.template.index' });
         },
 
         saveFinish() {

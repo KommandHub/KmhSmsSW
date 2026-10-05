@@ -111,6 +111,6 @@ class SendSmsHandler
 
     private function cacheKey(string $dedupeKey): string
     {
-        return 'kommandhub_sms_sent_' . hash('xxh128', $dedupeKey);
+        return 'kmh_sms_sent_' . hash('xxh128', $dedupeKey);
     }
 }

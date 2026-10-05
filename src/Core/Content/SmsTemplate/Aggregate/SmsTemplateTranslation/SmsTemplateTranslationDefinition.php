@@ -20,7 +20,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
  */
 class SmsTemplateTranslationDefinition extends EntityTranslationDefinition
 {
-    public const ENTITY_NAME = 'kommandhub_sms_template_translation';
+    public const ENTITY_NAME = 'kmh_sms_template_translation';
 
     public function getEntityName(): string
     {

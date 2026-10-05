@@ -19,7 +19,7 @@
             {% set validationRules = validationRules|merge(['required']) %}
         {% endif %}
 
-        {% sw_include '@Storefront/storefront/component/form/kommandhub-dial-code-phone.html.twig' with {
+        {% sw_include '@Storefront/storefront/component/form/kmh-dial-code-phone.html.twig' with {
             label: label|trans,
             id: formPrefix ~ '-form-' ~ fieldName,
             name: fieldName,

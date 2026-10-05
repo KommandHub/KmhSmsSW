@@ -15,10 +15,10 @@ services:
     bind:
       Psr\Log\LoggerInterface $logger: '@Kommandhub\SmsSW\Logging\ConfigurableLogger'
       # Shopware autowires DAL repositories by argument-name convention only —
-      # `$kommandhubSmsTemplateRepository` for entity `kommandhub_sms_template`.
+      # `$kmhSmsTemplateRepository` for entity `kmh_sms_template`.
       # Our services call it `$templateRepository`, which reads better at the
       # call sites, so the mapping lives here instead of in every class name.
-      Shopware\Core\Framework\DataAbstractionLayer\EntityRepository $templateRepository: '@kommandhub_sms_template.repository'
+      Shopware\Core\Framework\DataAbstractionLayer\EntityRepository $templateRepository: '@kmh_sms_template.repository'
 
   # Every provider is tagged by virtue of implementing the contract, so a new
   # provider is picked up by the resource glob below and reaches the registry
@@ -36,9 +36,9 @@ services:
   # decorates the real monolog channel instead of recursing into itself.
   Kommandhub\SmsSW\Logging\ConfigurableLogger:
     arguments:
-      $logger: '@monolog.logger.kommandhub_sms_channel'
+      $logger: '@monolog.logger.kmh_sms_channel'
     tags:
-      - { name: 'monolog.logger', channel: 'kommandhub_sms_channel' }
+      - { name: 'monolog.logger', channel: 'kmh_sms_channel' }
 
   # Public so the integration wiring test can fetch it from the container. It is
   # an internal collection of tagged providers — no vendor secret, no security
@@ -52,11 +52,11 @@ services:
 
   Kommandhub\SmsSW\Core\Content\SmsTemplate\SmsTemplateDefinition:
     tags:
-      - { name: 'shopware.entity.definition', entity: 'kommandhub_sms_template' }
+      - { name: 'shopware.entity.definition', entity: 'kmh_sms_template' }
 
   Kommandhub\SmsSW\Core\Content\SmsTemplate\Aggregate\SmsTemplateTranslation\SmsTemplateTranslationDefinition:
     tags:
-      - { name: 'shopware.entity.definition', entity: 'kommandhub_sms_template_translation' }
+      - { name: 'shopware.entity.definition', entity: 'kmh_sms_template_translation' }
 
 
 
@@ -83,7 +83,7 @@ services:
   # and nothing happens. It must equal SendSmsAction::getName().
   Kommandhub\SmsSW\Flow\Action\SendSmsAction:
     tags:
-      - { name: 'flow.action', priority: 500, key: 'action.kommandhub.send.sms' }
+      - { name: 'flow.action', priority: 500, key: 'action.kmh.send.sms' }
 
 
   # Autoconfigure tags this as twig.extension; only the repository needs naming,

@@ -1,5 +1,5 @@
 {
-  "kommandhub-sms": {
+  "kmh-sms": {
     "title": "SMS pour Shopware 6",
     "storefront": {
       "dialCodeLabel": "Indicatif du pays",

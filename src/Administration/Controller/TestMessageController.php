@@ -25,8 +25,8 @@ class TestMessageController
     }
 
     #[Route(
-        path: '/api/_action/kommandhub-sms/sms-template/{templateId}/test-message',
-        name: 'api.action.kommandhub_sms.test_message',
+        path: '/api/_action/kmh-sms/sms-template/{templateId}/test-message',
+        name: 'api.action.kmh_sms.test_message',
         methods: ['POST'],
         defaults: ['_acl' => ['sms.manage']],
     )]

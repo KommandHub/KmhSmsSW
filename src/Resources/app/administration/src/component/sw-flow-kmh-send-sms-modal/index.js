@@ -1,4 +1,4 @@
-import template from './sw-flow-kommandhub-send-sms-modal.html.twig';
+import template from './sw-flow-kmh-send-sms-modal.html.twig';
 
 const { Component, Mixin } = Shopware;
 const { Criteria } = Shopware.Data;
@@ -8,14 +8,14 @@ const { ShopwareError } = Shopware.Classes;
  * Configuration modal for the Send SMS flow action.
  *
  * The component name is not free to choose: the flow builder derives it from
- * the action name (`action.kommandhub.send.sms` ->
- * `sw-flow-kommandhub-send-sms-modal`), so renaming either side silently breaks
+ * the action name (`action.kmh.send.sms` ->
+ * `sw-flow-kmh-send-sms-modal`), so renaming either side silently breaks
  * the modal open.
  *
  * The saved config is `{ templateId }`, which is exactly what
  * SendSmsAction::handleFlow() reads on the PHP side.
  */
-Component.register('sw-flow-kommandhub-send-sms-modal', {
+Component.register('sw-flow-kmh-send-sms-modal', {
     template,
 
     inject: ['repositoryFactory'],

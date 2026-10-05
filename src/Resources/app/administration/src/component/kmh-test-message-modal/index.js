@@ -1,4 +1,4 @@
-import template from './kommandhub-test-message-modal.html.twig';
+import template from './kmh-test-message-modal.html.twig';
 
 const { Component } = Shopware;
 
@@ -7,10 +7,10 @@ const { Component } = Shopware;
  *
  * The caller passes a template id and this component owns the phone input, the
  * request and the notifications. Snippets live under
- * `kommandhub-sms.testMessage.*` rather than in the module's
+ * `kmh-sms.testMessage.*` rather than in the module's
  * namespace so a second module could reuse the dialog unchanged.
  */
-Component.register('kommandhub-test-message-modal', {
+Component.register('kmh-test-message-modal', {
     template,
 
     inject: ['testMessageApiService'],
@@ -70,7 +70,7 @@ Component.register('kommandhub-test-message-modal', {
 
                 if (result.success) {
                     this.createNotificationSuccess({
-                        message: this.$t('kommandhub-sms.testMessage.messageSent', {
+                        message: this.$t('kmh-sms.testMessage.messageSent', {
                             recipient: this.recipient,
                         }),
                     });
@@ -85,7 +85,7 @@ Component.register('kommandhub-test-message-modal', {
                 // A transport or permission failure never reached the service,
                 // so there is no structured reason to translate.
                 this.createNotificationError({
-                    message: this.$t('kommandhub-sms.testMessage.errorUnexpected'),
+                    message: this.$t('kmh-sms.testMessage.errorUnexpected'),
                 });
             } finally {
                 this.isSending = false;
@@ -113,7 +113,7 @@ Component.register('kommandhub-test-message-modal', {
             ];
 
             const key = known.includes(result.reason) ? result.reason : 'errorUnexpected';
-            let message = this.$t(`kommandhub-sms.testMessage.error.${key}`);
+            let message = this.$t(`kmh-sms.testMessage.error.${key}`);
 
             if (result.detail) {
                 message += ` (${result.detail})`;
