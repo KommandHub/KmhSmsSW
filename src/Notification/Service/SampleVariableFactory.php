@@ -23,21 +23,26 @@ class SampleVariableFactory
      */
     public function build(): array
     {
+        $customer = [
+            'firstName' => 'Jane',
+            'lastName' => 'Doe',
+            'email' => 'jane.doe@example.com',
+            'customerNumber' => 'SW-10000',
+        ];
+
         return [
             'order' => [
                 'orderNumber' => '10001',
                 'amountTotal' => '49.99',
                 'currency' => ['isoCode' => 'NGN'],
+                // Order events carry the buyer here, not as `customer`; a
+                // template written against a live order flow must render too.
+                'orderCustomer' => $customer,
                 'deliveries' => [
                     ['trackingCodes' => ['SAMPLE-TRACKING-1']],
                 ],
             ],
-            'customer' => [
-                'firstName' => 'Jane',
-                'lastName' => 'Doe',
-                'email' => 'jane.doe@example.com',
-                'customerNumber' => 'SW-10000',
-            ],
+            'customer' => $customer,
             'salesChannel' => [
                 'name' => 'Storefront',
             ],

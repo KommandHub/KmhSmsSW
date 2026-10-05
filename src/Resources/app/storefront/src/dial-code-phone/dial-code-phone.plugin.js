@@ -74,6 +74,13 @@ export default class DialCodePhonePlugin extends Plugin {
     }
 
     _onBlur() {
+        // A typed country code must survive until validation sees it:
+        // normalising strips the "+" / "00" that `noDialCode` detects, and
+        // the merged value would then post as "+49234803…".
+        if (!this._validateNoDialCode(this._national.value, this._national)) {
+            return;
+        }
+
         this._national.value = this._normalise(this._national.value);
         this._syncHiddenField();
     }
