@@ -1,4 +1,5 @@
 import template from './sw-flow-kmh-send-sms-modal.html.twig';
+import './sw-flow-kmh-send-sms-modal.scss';
 
 const { Component, Mixin } = Shopware;
 const { Criteria } = Shopware.Data;
@@ -12,8 +13,8 @@ const { ShopwareError } = Shopware.Classes;
  * `sw-flow-kmh-send-sms-modal`), so renaming either side silently breaks
  * the modal open.
  *
- * The saved config is `{ templateId }`, which is exactly what
- * SendSmsAction::handleFlow() reads on the PHP side.
+ * The saved config is `{ templateId, templateName }`. SendSmsAction::handleFlow()
+ * reads only templateId; the name is for the sequence card.
  */
 Component.register('sw-flow-kmh-send-sms-modal', {
     template,
@@ -65,7 +66,7 @@ Component.register('sw-flow-kmh-send-sms-modal', {
     },
 
     methods: {
-        onSave() {
+        async onSave() {
             if (!this.templateId) {
                 this.templateError = new ShopwareError({
                     code: 'c1051bb4-d103-4f74-8988-acbcafc7fdc3',
@@ -74,9 +75,17 @@ Component.register('sw-flow-kmh-send-sms-modal', {
                 return;
             }
 
+            // The name is a display snapshot for the sequence card only; the
+            // PHP side reads templateId and ignores it.
+            // ponytail: goes stale if the template is renamed; resolve live in
+            // the description callback if merchants rename often.
+            const template = await this.repositoryFactory
+                .create('kmh_sms_template')
+                .get(this.templateId, Shopware.Context.api);
+
             this.$emit('process-finish', {
                 ...this.sequence,
-                config: { templateId: this.templateId },
+                config: { templateId: this.templateId, templateName: template?.name ?? null },
             });
             this.onClose();
         },

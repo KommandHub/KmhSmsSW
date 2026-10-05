@@ -39,7 +39,9 @@ Shopware.Application.addServiceProviderDecorator('flowBuilderService', (flowBuil
          * Shown on the sequence card once the action is configured. The default
          * would print the raw template UUID, which tells a merchant nothing.
          */
-        [SEND_SMS_ACTION]: (context) => context.translator.$tc('kmh-sms.flowAction.description'),
+        [SEND_SMS_ACTION]: ({ sequence, translator }) => (sequence.config?.templateName
+            ? translator.$t('kmh-sms.flowAction.descriptionWithTemplate', { name: sequence.config.templateName })
+            : translator.$tc('kmh-sms.flowAction.description')),
     });
 
     return flowBuilderService;

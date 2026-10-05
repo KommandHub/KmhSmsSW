@@ -3,11 +3,11 @@
   "entryPoints": {
     "kmh-sms-s-w": {
       "css": [
-        "/bundles/kmhsmssw/administration/assets/kmh-sms-s-w-CKzpNJbv.css"
+        "/bundles/kmhsmssw/administration/assets/kmh-sms-s-w-BkMcthn0.css"
       ],
       "dynamic": [],
       "js": [
-        "/bundles/kmhsmssw/administration/assets/kmh-sms-s-w-CdlP5YVM.js"
+        "/bundles/kmhsmssw/administration/assets/kmh-sms-s-w-Bkbp3C7B.js"
       ],
       "legacy": false,
       "preload": []

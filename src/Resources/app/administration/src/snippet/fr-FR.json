@@ -9,7 +9,8 @@
         "hint": "Envoie le modèle sélectionné au client concerné par ce flux. Si le client n'a pas de numéro de mobile utilisable, le SMS est ignoré et le reste du flux — y compris l'e-mail — se poursuit.",
         "labelTemplate": "Modèle de SMS",
         "placeholderTemplate": "Sélectionne un modèle de SMS…"
-      }
+      },
+      "descriptionWithTemplate": "Envoie le modèle de SMS « {name} » au numéro de mobile du client."
     },
     "testMessage": {
       "title": "Envoyer un message de test",
@@ -40,6 +41,11 @@
         "label": "SMS for Shopware 6",
         "manage": "Manage"
       }
+    }
+  },
+  "global": {
+    "entities": {
+      "kmh_sms_template": "Modèle de SMS | Modèles de SMS"
     }
   }
 }

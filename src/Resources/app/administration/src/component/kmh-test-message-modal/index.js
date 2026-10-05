@@ -1,4 +1,5 @@
 import template from './kmh-test-message-modal.html.twig';
+import './kmh-test-message-modal.scss';
 
 const { Component } = Shopware;
 
