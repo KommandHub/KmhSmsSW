@@ -10,8 +10,8 @@ import './acl';
 
 import './init/flow-builder.init';
 
-import './component/kommandhub-test-message-modal';
-import './component/sw-flow-kommandhub-send-sms-modal';
+import './component/kmh-test-message-modal';
+import './component/sw-flow-kmh-send-sms-modal';
 
 import './module/sms-template';
 

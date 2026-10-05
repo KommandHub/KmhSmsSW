@@ -11,10 +11,10 @@ class SmsTemplateTranslationEntity extends TranslationEntity
 {
     /**
      * Named after the parent entity, which the DAL derives from
-     * `kommandhub_sms_template` — the prefix is part of the property name, not
+     * `kmh_sms_template` — the prefix is part of the property name, not
      * decoration that can be trimmed.
      */
-    protected string $kommandhubSmsTemplateId;
+    protected string $kmhSmsTemplateId;
 
     protected string $name;
 
@@ -22,14 +22,14 @@ class SmsTemplateTranslationEntity extends TranslationEntity
 
     protected ?SmsTemplateEntity $smsTemplate = null;
 
-    public function getKommandhubSmsTemplateId(): string
+    public function getKmhSmsTemplateId(): string
     {
-        return $this->kommandhubSmsTemplateId;
+        return $this->kmhSmsTemplateId;
     }
 
-    public function setKommandhubSmsTemplateId(string $kommandhubSmsTemplateId): void
+    public function setKmhSmsTemplateId(string $kmhSmsTemplateId): void
     {
-        $this->kommandhubSmsTemplateId = $kommandhubSmsTemplateId;
+        $this->kmhSmsTemplateId = $kmhSmsTemplateId;
     }
 
     public function getName(): string

@@ -46,7 +46,7 @@ Transactional SMS for Shopware 6, sent alongside core email, with multi-provider
 ```bash
 composer require kommandhub/sms-sw
 bin/console plugin:refresh
-bin/console plugin:install --activate KommandhubSmsSW
+bin/console plugin:install --activate KmhSmsSW
 bin/console cache:clear
 ```
 
@@ -73,7 +73,7 @@ Always present:
 
 | Path | Responsibility |
 | --- | --- |
-| `src/KommandhubSmsSW.php` | plugin bootstrap and lifecycle hooks |
+| `src/KmhSmsSW.php` | plugin bootstrap and lifecycle hooks |
 | `src/Setting/Service/Config.php` | typed, sales-channel-aware settings reader |
 | `src/Logging/ConfigurableLogger.php` | PSR-3 wrapper gated on the debug settings |
 | `src/Exception/` | plugin-scoped exception base |
@@ -159,7 +159,7 @@ so an SMS is always a sibling of the email Shopware already sends:
 
 | Entity | Table | Definition |
 | --- | --- | --- |
-| `kommandhub_sms_template` | `kommandhub_sms_template` + `kommandhub_sms_template_translation` | `src/Core/Content/SmsTemplate/` |
+| `kmh_sms_template` | `kmh_sms_template` + `kmh_sms_template_translation` | `src/Core/Content/SmsTemplate/` |
 
 It mirrors the layout of Shopware's own `Core/Content/MailTemplate/`: the
 merchant-editable `name` and `content` live in the translation aggregate.
@@ -170,7 +170,7 @@ step. Migrations are append-only: never edit a released one.
 Access them via the generated repositories:
 
 ```php
-$repository = $container->get('kommandhub_sms_template.repository');
+$repository = $container->get('kmh_sms_template.repository');
 ```
 
 ### Message queue
@@ -185,7 +185,7 @@ Two rules: messages carry **ids, not entities**, and handlers are
 
 - `src/Resources/app/storefront/src/` — JS plugins, registered in `main.js`.
 - `src/Resources/views/storefront/` — Twig overrides. **Namespace every block**
-  you add (`{% block kommandhub_sms_foo %}`) so it cannot collide with another plugin
+  you add (`{% block kmh_sms_foo %}`) so it cannot collide with another plugin
   extending the same template.
 - `src/Resources/snippet/<locale>/` — storefront translations; every locale file
   must carry the same key tree.
@@ -208,18 +208,18 @@ Register the URL in the provider's dashboard per sales channel domain.
 ## Local development
 
 The plugin is developed inside a Docker stack that runs a full Shopware install
-with this directory mounted at `custom/static-plugins/KommandhubSmsSW`.
+with this directory mounted at `custom/static-plugins/KmhSmsSW`.
 
 ```bash
-git clone https://github.com/Kommandhub/KommandhubSmsSW.git
-cd KommandhubSmsSW
+git clone https://github.com/Kommandhub/KmhSmsSW.git
+cd KmhSmsSW
 
 make up     # build the image, start Shopware, install dependencies
 make shell  # bash into the container
 
 # inside the container
 bin/console plugin:refresh
-bin/console plugin:install --activate KommandhubSmsSW
+bin/console plugin:install --activate KmhSmsSW
 ```
 
 Storefront: <http://localhost> · Administration: <http://localhost/admin>
@@ -286,7 +286,7 @@ there and the plugin bootstrap is excluded from coverage in `phpunit.dist.xml`.
 ## Logging and debugging
 
 Enable **debug logging** in the plugin configuration; entries land in
-`var/log/kommandhub_sms_<env>.log` (rotating, 7 files).
+`var/log/kmh_sms_<env>.log` (rotating, 7 files).
 
 `error` and above are **always** written regardless of the toggle, so production
 keeps a trail of failures. Both the toggle and the level filter are

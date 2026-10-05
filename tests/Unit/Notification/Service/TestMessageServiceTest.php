@@ -232,7 +232,7 @@ class TestMessageServiceTest extends TestCase
 
         $this->repository->method('search')->willReturn(
             new EntitySearchResult(
-                'kommandhub_sms_template',
+                'kmh_sms_template',
                 $collection->count(),
                 $collection,
                 null,

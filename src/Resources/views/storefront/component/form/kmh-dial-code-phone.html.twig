@@ -23,10 +23,10 @@
     * violationPath (optional) - key for server-side violations.
     * additionalClass (optional) - classes for the form-group wrapper.
 #}
-{% block component_kommandhub_dial_code_phone %}
+{% block component_kmh_dial_code_phone %}
 
-    {% set splitValue = kommandhub_sms_split_phone(value) %}
-    {% set selectedDialCode = splitValue.dialCode ?: kommandhub_sms_default_dial_code(context) %}
+    {% set splitValue = kmh_sms_split_phone(value) %}
+    {% set selectedDialCode = splitValue.dialCode ?: kmh_sms_default_dial_code(context) %}
 
     {% set isInvalid = false %}
 
@@ -46,7 +46,7 @@
 
     <div class="form-group{% if additionalClass is not empty %} {{ additionalClass }}{% endif %}">
 
-        {% block component_kommandhub_dial_code_phone_label %}
+        {% block component_kmh_dial_code_phone_label %}
             {% if label %}
                 <label class="form-label" for="{{ id }}">
                     {{ label|raw }}
@@ -58,24 +58,24 @@
             {% endif %}
         {% endblock %}
 
-        {% block component_kommandhub_dial_code_phone_group %}
-            <div class="input-group kommandhub-dial-code-phone"
-                 data-kommandhub-dial-code-phone="true"
-                 data-kommandhub-dial-code-phone-options="{{ {
+        {% block component_kmh_dial_code_phone_group %}
+            <div class="input-group kmh-dial-code-phone"
+                 data-kmh-dial-code-phone="true"
+                 data-kmh-dial-code-phone-options="{{ {
                      fieldName: name,
                  }|json_encode }}"
-                 data-kommandhub-dial-code-phone-message="{{ 'kommandhub-sms.storefront.dialCodeInNumberError'|trans|sw_sanitize }}">
+                 data-kmh-dial-code-phone-message="{{ 'kmh-sms.storefront.dialCodeInNumberError'|trans|sw_sanitize }}">
 
-                {% block component_kommandhub_dial_code_phone_select %}
-                    <select class="form-select flex-grow-0 w-auto kommandhub-dial-code-phone__code"
+                {% block component_kmh_dial_code_phone_select %}
+                    <select class="form-select flex-grow-0 w-auto kmh-dial-code-phone__code"
                             id="{{ dialCodeId }}"
-                            aria-label="{{ 'kommandhub-sms.storefront.dialCodeLabel'|trans|sw_sanitize }}">
+                            aria-label="{{ 'kmh-sms.storefront.dialCodeLabel'|trans|sw_sanitize }}">
 
                         <option value=""{% if not selectedDialCode %} selected{% endif %}>
-                            {{ 'kommandhub-sms.storefront.dialCodePlaceholder'|trans|sw_sanitize }}
+                            {{ 'kmh-sms.storefront.dialCodePlaceholder'|trans|sw_sanitize }}
                         </option>
 
-                        {% for entry in kommandhub_sms_dial_codes() %}
+                        {% for entry in kmh_sms_dial_codes() %}
                             <option value="{{ entry.dialCode }}"
                                     data-iso="{{ entry.iso }}"
                                     {% if selectedDialCode == entry.dialCode %}selected{% endif %}>
@@ -85,9 +85,9 @@
                     </select>
                 {% endblock %}
 
-                {% block component_kommandhub_dial_code_phone_input %}
+                {% block component_kmh_dial_code_phone_input %}
                     <input type="tel"
-                           class="form-control kommandhub-dial-code-phone__national{% if isInvalid %} is-invalid{% endif %}"
+                           class="form-control kmh-dial-code-phone__national{% if isInvalid %} is-invalid{% endif %}"
                            id="{{ id }}"
                            name="{{ name }}"
                            aria-describedby="{{ feedbackId }}"
@@ -100,7 +100,7 @@
             </div>
         {% endblock %}
 
-        {% block component_kommandhub_dial_code_phone_feedback %}
+        {% block component_kmh_dial_code_phone_feedback %}
             <div id="{{ feedbackId }}" class="form-field-feedback">
                 {% if violationPath is not empty and formViolations.getViolations(violationPath) is not empty %}
                     {% sw_include '@Storefront/storefront/utilities/form-violation.html.twig' %}

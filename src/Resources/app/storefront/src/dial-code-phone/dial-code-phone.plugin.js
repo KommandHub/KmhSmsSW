@@ -24,8 +24,8 @@ export default class DialCodePhonePlugin extends Plugin {
          */
         fieldName: '',
 
-        selectSelector: '.kommandhub-dial-code-phone__code',
-        nationalSelector: '.kommandhub-dial-code-phone__national',
+        selectSelector: '.kmh-dial-code-phone__code',
+        nationalSelector: '.kmh-dial-code-phone__national',
     };
 
     init() {
@@ -178,14 +178,14 @@ export default class DialCodePhonePlugin extends Plugin {
      * validator is shared by every phone field on the page.
      */
     _selectedDialCodeFor(field) {
-        const group = field.closest('[data-kommandhub-dial-code-phone]');
+        const group = field.closest('[data-kmh-dial-code-phone]');
         const select = group?.querySelector(this.options.selectSelector);
 
         return select?.value || null;
     }
 
     _validationMessage() {
-        return this.el.getAttribute('data-kommandhub-dial-code-phone-message')
+        return this.el.getAttribute('data-kmh-dial-code-phone-message')
             || 'Enter the number without the country code — choose the country from the list next to it.';
     }
 }

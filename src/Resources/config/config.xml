@@ -225,13 +225,13 @@
             <label lang="de-DE">Debug-Protokollierung aktivieren</label>
             <defaultValue>false</defaultValue>
             <helpText>
-                Writes debug, info and warning entries to var/log/kommandhub_sms_*.log.
+                Writes debug, info and warning entries to var/log/kmh_sms_*.log.
                 Errors are always logged regardless of this setting. Can be scoped
                 to a single sales channel.
             </helpText>
             <helpText lang="de-DE">
                 Schreibt Debug-, Info- und Warnungseinträge nach
-                var/log/kommandhub_sms_*.log. Fehler werden unabhängig von dieser
+                var/log/kmh_sms_*.log. Fehler werden unabhängig von dieser
                 Einstellung immer protokolliert.
             </helpText>
         </input-field>

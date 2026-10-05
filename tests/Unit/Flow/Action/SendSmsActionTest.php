@@ -59,7 +59,7 @@ class SendSmsActionTest extends TestCase
 
     public function testGetName(): void
     {
-        $this->assertEquals('action.kommandhub.send.sms', SendSmsAction::getName());
+        $this->assertEquals('action.kmh.send.sms', SendSmsAction::getName());
     }
 
     public function testRequirements(): void

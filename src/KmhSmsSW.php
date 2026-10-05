@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  * kernel, so it is excluded from the no-kernel coverage gate (see
  * phpunit.dist.xml) and is covered by the @group kernel integration tests.
  */
-class KommandhubSmsSW extends Plugin
+class KmhSmsSW extends Plugin
 {
     /**
      * Allow composer commands during plugin execution.
@@ -127,7 +127,7 @@ class KommandhubSmsSW extends Plugin
         /** @var Connection $connection */
         $connection = $this->container->get(Connection::class);
 
-        $connection->executeStatement('DROP TABLE IF EXISTS `kommandhub_sms_template_translation`');
-        $connection->executeStatement('DROP TABLE IF EXISTS `kommandhub_sms_template`');
+        $connection->executeStatement('DROP TABLE IF EXISTS `kmh_sms_template_translation`');
+        $connection->executeStatement('DROP TABLE IF EXISTS `kmh_sms_template`');
     }
 }

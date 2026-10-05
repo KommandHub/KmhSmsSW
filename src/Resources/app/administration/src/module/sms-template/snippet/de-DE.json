@@ -1,5 +1,5 @@
 {
-  "kommandhub-sms-template": {
+  "kmh-sms-template": {
     "general": {
       "mainMenuItemGeneral": "SMS-Vorlagen",
       "descriptionTextModule": "Benachrichtigungen: die SMS, die Kunden zu jedem Bestellereignis erhalten"

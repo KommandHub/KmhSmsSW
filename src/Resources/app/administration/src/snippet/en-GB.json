@@ -1,5 +1,5 @@
 {
-  "kommandhub-sms": {
+  "kmh-sms": {
     "title": "SMS for Shopware 6",
     "testMessage": {
       "title": "Send test message",

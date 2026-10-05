@@ -40,7 +40,7 @@ class WebhookController extends StorefrontController
 
     #[Route(
         path: '/notifications/webhook',
-        name: 'kommandhub_sms_webhook',
+        name: 'kmh_sms_webhook',
         methods: ['POST'],
     )]
     public function handle(Request $request): Response

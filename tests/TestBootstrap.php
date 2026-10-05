@@ -9,7 +9,7 @@ $loader = (new TestBootstrapper())
     ->addCallingPlugin()
     ->setForceInstallPlugins(true)
     ->addActivePlugins(
-        'KommandhubSmsSW',
+        'KmhSmsSW',
     )
     ->bootstrap()
     ->getClassLoader();

@@ -52,7 +52,7 @@
         }
     },
     "extra": {
-        "shopware-plugin-class": "Kommandhub\\SmsSW\\KommandhubSmsSW",
+        "shopware-plugin-class": "Kommandhub\\SmsSW\\KmhSmsSW",
         "label": {
             "en-GB": "SMS for Shopware 6",
             "de-DE": "SMS für Shopware 6",

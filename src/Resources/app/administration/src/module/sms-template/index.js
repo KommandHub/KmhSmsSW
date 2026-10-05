@@ -17,19 +17,19 @@ const { Module } = Shopware;
  * "Notifications" grouping comes from both modules using the same group and a
  * common label prefix.
  */
-Module.register('kommandhub-sms-template', {
+Module.register('kmh-sms-template', {
     type: 'plugin',
-    name: 'kommandhub-sms-template',
-    title: 'kommandhub-sms-template.general.mainMenuItemGeneral',
-    description: 'kommandhub-sms-template.general.descriptionTextModule',
+    name: 'kmh-sms-template',
+    title: 'kmh-sms-template.general.mainMenuItemGeneral',
+    description: 'kmh-sms-template.general.descriptionTextModule',
     color: '#37d046',
     icon: 'regular-comments',
     favicon: 'icon-module-settings.png',
-    entity: 'kommandhub_sms_template',
+    entity: 'kmh_sms_template',
 
     routes: {
         index: {
-            component: 'kommandhub-sms-template-list',
+            component: 'kmh-sms-template-list',
             path: 'index',
             meta: {
                 parentPath: 'sw.settings.index.plugins',
@@ -37,10 +37,10 @@ Module.register('kommandhub-sms-template', {
             },
         },
         detail: {
-            component: 'kommandhub-sms-template-detail',
+            component: 'kmh-sms-template-detail',
             path: 'detail/:id',
             meta: {
-                parentPath: 'kommandhub.sms.template.index',
+                parentPath: 'kmh.sms.template.index',
                 privilege: 'sms.manage',
             },
             props: {
@@ -48,10 +48,10 @@ Module.register('kommandhub-sms-template', {
             },
         },
         create: {
-            component: 'kommandhub-sms-template-detail',
+            component: 'kmh-sms-template-detail',
             path: 'create',
             meta: {
-                parentPath: 'kommandhub.sms.template.index',
+                parentPath: 'kmh.sms.template.index',
                 privilege: 'sms.manage',
             },
         },
@@ -60,10 +60,10 @@ Module.register('kommandhub-sms-template', {
     settingsItem: [
         {
             group: 'plugins',
-            to: 'kommandhub.sms.template.index',
+            to: 'kmh.sms.template.index',
             icon: 'regular-comments',
-            name: 'kommandhub-sms-template',
-            label: 'kommandhub-sms-template.general.mainMenuItemGeneral',
+            name: 'kmh-sms-template',
+            label: 'kmh-sms-template.general.mainMenuItemGeneral',
             privilege: 'sms.manage',
         },
     ],

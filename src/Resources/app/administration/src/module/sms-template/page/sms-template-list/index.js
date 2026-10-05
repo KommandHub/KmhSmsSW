@@ -8,7 +8,7 @@ const { Criteria } = Data;
  * sorting and the search term, and this component only says what to fetch and
  * what the columns are.
  */
-Component.register('kommandhub-sms-template-list', {
+Component.register('kmh-sms-template-list', {
     template,
 
     inject: ['repositoryFactory', 'acl'],
@@ -31,7 +31,7 @@ Component.register('kommandhub-sms-template-list', {
 
     computed: {
         repository() {
-            return this.repositoryFactory.create('kommandhub_sms_template');
+            return this.repositoryFactory.create('kmh_sms_template');
         },
 
         criteria() {
@@ -50,8 +50,8 @@ Component.register('kommandhub-sms-template-list', {
             return [
                 {
                     property: 'mailTemplateType.name',
-                    label: 'kommandhub-sms-template.list.columnEvent',
-                    routerLink: 'kommandhub.sms.template.detail',
+                    label: 'kmh-sms-template.list.columnEvent',
+                    routerLink: 'kmh.sms.template.detail',
                     primary: true,
                     allowResize: true,
                     // The association is on the joined entity, which the DAL
@@ -60,12 +60,12 @@ Component.register('kommandhub-sms-template-list', {
                 },
                 {
                     property: 'senderId',
-                    label: 'kommandhub-sms-template.list.columnSenderId',
+                    label: 'kmh-sms-template.list.columnSenderId',
                     allowResize: true,
                 },
                 {
                     property: 'updatedAt',
-                    label: 'kommandhub-sms-template.list.columnUpdatedAt',
+                    label: 'kmh-sms-template.list.columnUpdatedAt',
                     allowResize: true,
                 },
             ];
@@ -81,7 +81,7 @@ Component.register('kommandhub-sms-template-list', {
                 this.total = this.templates.total;
             } catch {
                 this.createNotificationError({
-                    message: this.$tc('kommandhub-sms-template.list.messageLoadError'),
+                    message: this.$tc('kmh-sms-template.list.messageLoadError'),
                 });
             } finally {
                 this.isLoading = false;
@@ -94,7 +94,7 @@ Component.register('kommandhub-sms-template-list', {
          */
         onDeleteSuccess() {
             this.createNotificationSuccess({
-                message: this.$tc('kommandhub-sms-template.list.messageDeleteSuccess'),
+                message: this.$tc('kmh-sms-template.list.messageDeleteSuccess'),
             });
 
             this.getList();
@@ -102,7 +102,7 @@ Component.register('kommandhub-sms-template-list', {
 
         onDeleteError() {
             this.createNotificationError({
-                message: this.$tc('kommandhub-sms-template.list.messageDeleteError'),
+                message: this.$tc('kmh-sms-template.list.messageDeleteError'),
             });
         },
     },

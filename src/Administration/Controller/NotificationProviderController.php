@@ -33,8 +33,8 @@ class NotificationProviderController
      * Every known provider and whether this sales channel has it configured.
      */
     #[Route(
-        path: '/api/_action/kommandhub-sms/provider',
-        name: 'api.action.kommandhub_sms.provider.list',
+        path: '/api/_action/kmh-sms/provider',
+        name: 'api.action.kmh_sms.provider.list',
         methods: ['GET'],
         defaults: ['_acl' => ['sms.manage']],
     )]
@@ -64,8 +64,8 @@ class NotificationProviderController
      * renders the reason.
      */
     #[Route(
-        path: '/api/_action/kommandhub-sms/provider/{providerName}/verify',
-        name: 'api.action.kommandhub_sms.provider.verify',
+        path: '/api/_action/kmh-sms/provider/{providerName}/verify',
+        name: 'api.action.kmh_sms.provider.verify',
         methods: ['POST'],
         defaults: ['_acl' => ['sms.manage']],
     )]

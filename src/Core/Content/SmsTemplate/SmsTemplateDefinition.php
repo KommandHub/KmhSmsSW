@@ -32,7 +32,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
  */
 class SmsTemplateDefinition extends EntityDefinition
 {
-    public const ENTITY_NAME = 'kommandhub_sms_template';
+    public const ENTITY_NAME = 'kmh_sms_template';
 
     public function getEntityName(): string
     {
@@ -65,7 +65,7 @@ class SmsTemplateDefinition extends EntityDefinition
             (new TranslatedField('content'))->addFlags(new ApiAware()),
 
             new ManyToOneAssociationField('mailTemplateType', 'mail_template_type_id', MailTemplateTypeDefinition::class, 'id', false),
-            (new TranslationsAssociationField(SmsTemplateTranslationDefinition::class, 'kommandhub_sms_template_id'))
+            (new TranslationsAssociationField(SmsTemplateTranslationDefinition::class, 'kmh_sms_template_id'))
                 ->addFlags(new Required()),
         ]);
     }

@@ -34,9 +34,9 @@ class DialCodeExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('kommandhub_sms_dial_codes', $this->getDialCodes(...)),
-            new TwigFunction('kommandhub_sms_split_phone', $this->splitPhone(...)),
-            new TwigFunction('kommandhub_sms_default_dial_code', $this->getDefaultDialCode(...)),
+            new TwigFunction('kmh_sms_dial_codes', $this->getDialCodes(...)),
+            new TwigFunction('kmh_sms_split_phone', $this->splitPhone(...)),
+            new TwigFunction('kmh_sms_default_dial_code', $this->getDefaultDialCode(...)),
         ];
     }
 

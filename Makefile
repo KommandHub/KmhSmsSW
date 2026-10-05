@@ -1,12 +1,12 @@
 .PHONY: help up down build restart shell plugin-list test test-coverage cs cs-fix analyse fixture-load resync prepare validate-plugin cli changelog zip
 
 CONTAINER := shopware
-PLUGIN_DIR := custom/static-plugins/KommandhubSmsSW
+PLUGIN_DIR := custom/static-plugins/KmhSmsSW
 
 # Plugins installed via composer, as "<composer package>:<plugin class>".
 # Add sibling plugins this one depends on here.
 STATIC_PLUGINS := \
-	kommandhub/sms-sw:KommandhubSmsSW
+	kommandhub/sms-sw:KmhSmsSW
 
 # Plugins that must additionally be COPIED into custom/static-plugins. The
 # plugin under development is already mounted there by docker-compose, so it

@@ -9,7 +9,7 @@ const ApiService = Shopware.Classes.ApiService;
  * malformed-request errors reject.
  */
 export default class TestMessageApiService extends ApiService {
-    constructor(httpClient, loginService, apiEndpoint = 'kommandhub-sms') {
+    constructor(httpClient, loginService, apiEndpoint = 'kmh-sms') {
         super(httpClient, loginService, apiEndpoint);
         this.name = 'testMessageApiService';
     }
@@ -23,7 +23,7 @@ export default class TestMessageApiService extends ApiService {
     send(templateId, recipient, salesChannelId = null) {
         return this.httpClient
             .post(
-                `/_action/kommandhub-sms/sms-template/${templateId}/test-message`,
+                `/_action/kmh-sms/sms-template/${templateId}/test-message`,
                 { recipient, salesChannelId },
                 { headers: this.getBasicHeaders() },
             )

@@ -18,7 +18,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
  * ever benefit from. From the first release onwards migrations are append-only:
  * never edit this one, add a new one.
  *
- * Tables carry the `kommandhub_` prefix. `sms_template` sits in Shopware's
+ * Tables carry the `kmh_` prefix. `sms_template` sits in Shopware's
  * global table namespace, where any other plugin could reasonably claim the
  * same obvious name; the prefix makes a collision impossible.
  */
@@ -32,7 +32,7 @@ class Migration1784497400CreateSmsTemplateTables extends MigrationStep
     public function update(Connection $connection): void
     {
         $connection->executeStatement(<<<'SQL'
-            CREATE TABLE IF NOT EXISTS `kommandhub_sms_template` (
+            CREATE TABLE IF NOT EXISTS `kmh_sms_template` (
                 `id`                     BINARY(16)   NOT NULL,
                 `mail_template_type_id`  BINARY(16)   NOT NULL,
                 `active`                 TINYINT(1)   NOT NULL DEFAULT 1,
@@ -40,27 +40,27 @@ class Migration1784497400CreateSmsTemplateTables extends MigrationStep
                 `created_at`             DATETIME(3)  NOT NULL,
                 `updated_at`             DATETIME(3)  NULL,
                 PRIMARY KEY (`id`),
-                KEY `fk.kommandhub_sms_template.mail_template_type_id` (`mail_template_type_id`),
-                CONSTRAINT `fk.kommandhub_sms_template.mail_template_type_id`
+                KEY `fk.kmh_sms_template.mail_template_type_id` (`mail_template_type_id`),
+                CONSTRAINT `fk.kmh_sms_template.mail_template_type_id`
                     FOREIGN KEY (`mail_template_type_id`) REFERENCES `mail_template_type` (`id`)
                     ON DELETE CASCADE ON UPDATE CASCADE
             ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
         SQL);
 
         $connection->executeStatement(<<<'SQL'
-            CREATE TABLE IF NOT EXISTS `kommandhub_sms_template_translation` (
-                `kommandhub_sms_template_id` BINARY(16)   NOT NULL,
-                `language_id`                BINARY(16)   NOT NULL,
-                `name`                       VARCHAR(255) NOT NULL,
-                `content`                    LONGTEXT     NOT NULL,
-                `created_at`                 DATETIME(3)  NOT NULL,
-                `updated_at`                 DATETIME(3)  NULL,
-                PRIMARY KEY (`kommandhub_sms_template_id`, `language_id`),
-                KEY `fk.kommandhub_sms_template_translation.language_id` (`language_id`),
-                CONSTRAINT `fk.kommandhub_sms_template_translation.template_id`
-                    FOREIGN KEY (`kommandhub_sms_template_id`) REFERENCES `kommandhub_sms_template` (`id`)
+            CREATE TABLE IF NOT EXISTS `kmh_sms_template_translation` (
+                `kmh_sms_template_id` BINARY(16)   NOT NULL,
+                `language_id`         BINARY(16)   NOT NULL,
+                `name`                VARCHAR(255) NOT NULL,
+                `content`             LONGTEXT     NOT NULL,
+                `created_at`          DATETIME(3)  NOT NULL,
+                `updated_at`          DATETIME(3)  NULL,
+                PRIMARY KEY (`kmh_sms_template_id`, `language_id`),
+                KEY `fk.kmh_sms_template_translation.language_id` (`language_id`),
+                CONSTRAINT `fk.kmh_sms_template_translation.template_id`
+                    FOREIGN KEY (`kmh_sms_template_id`) REFERENCES `kmh_sms_template` (`id`)
                     ON DELETE CASCADE ON UPDATE CASCADE,
-                CONSTRAINT `fk.kommandhub_sms_template_translation.language_id`
+                CONSTRAINT `fk.kmh_sms_template_translation.language_id`
                     FOREIGN KEY (`language_id`) REFERENCES `language` (`id`)
                     ON DELETE CASCADE ON UPDATE CASCADE
             ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

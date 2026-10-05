@@ -1,5 +1,5 @@
 {
-  "kommandhub-sms-template": {
+  "kmh-sms-template": {
     "general": {
       "mainMenuItemGeneral": "SMS templates",
       "descriptionTextModule": "Notifications: the SMS a shopper receives for each order event"

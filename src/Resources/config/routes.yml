@@ -1,10 +1,10 @@
 # One entry per module that owns HTTP controllers. Routes themselves are
 # declared with #[Route] attributes on the controller methods.
-kommandhub_sms_webhook:
+kmh_sms_webhook:
     resource: ../../Webhook/Controller/
     type: attribute
 
 
-kommandhub_sms_administration:
+kmh_sms_administration:
     resource: ../../Administration/Controller/
     type: attribute
