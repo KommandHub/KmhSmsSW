@@ -125,7 +125,7 @@ class SendSmsAction extends FlowAction implements DelayableAction
     private function renderTemplate(StorableFlow $flow, string $templateId, ?string $salesChannelId): ?string
     {
         $criteria = new Criteria([$templateId]);
-        $template = $this->templateRepository->search($criteria, $flow->getContext())->first();
+        $template = $this->templateRepository->search($criteria, $flow->getContext())->getEntities()->first();
 
         if (!$template instanceof SmsTemplateEntity) {
             $this->logger->warning('Flow action references a template that no longer exists', [

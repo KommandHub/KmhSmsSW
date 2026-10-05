@@ -50,7 +50,7 @@
                  Shopware kernel. Covered by the @group kernel integration tests
                  in the full suite; excluded here so the no-kernel CI coverage
                  gate reflects code it can actually run. -->
-            <file>src/KommandhubSmsSW.php</file>
+            <file>src/KmhSmsSW.php</file>
         </exclude>
     </source>
 

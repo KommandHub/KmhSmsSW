@@ -24,7 +24,7 @@ class ConfigTest extends TestCase
     {
         $this->systemConfigService->expects($this->once())
             ->method('get')
-            ->with(Config::KEY . 'someKey', 'sales-channel-id')
+            ->with('KmhSmsSW.config.someKey', 'sales-channel-id')
             ->willReturn('someValue');
 
         $result = $this->config->get('someKey', null, 'sales-channel-id');
@@ -35,7 +35,7 @@ class ConfigTest extends TestCase
     {
         $this->systemConfigService->expects($this->once())
             ->method('get')
-            ->with(Config::KEY . 'missingKey', null)
+            ->with('KmhSmsSW.config.missingKey', null)
             ->willReturn(null);
 
         $result = $this->config->get('missingKey', 'defaultValue');
@@ -46,7 +46,7 @@ class ConfigTest extends TestCase
     {
         $this->systemConfigService->expects($this->once())
             ->method('get')
-            ->with(Config::KEY . 'stringKey', null)
+            ->with('KmhSmsSW.config.stringKey', null)
             ->willReturn('stringValue');
 
         $result = $this->config->getString('stringKey');
@@ -57,7 +57,7 @@ class ConfigTest extends TestCase
     {
         $this->systemConfigService->expects($this->once())
             ->method('get')
-            ->with(Config::KEY . 'nonStringKey', null)
+            ->with('KmhSmsSW.config.nonStringKey', null)
             ->willReturn(123);
 
         $result = $this->config->getString('nonStringKey');
@@ -68,7 +68,7 @@ class ConfigTest extends TestCase
     {
         $this->systemConfigService->expects($this->once())
             ->method('getBool')
-            ->with(Config::KEY . 'boolKey', 'sales-channel-id')
+            ->with('KmhSmsSW.config.boolKey', 'sales-channel-id')
             ->willReturn(true);
 
         $result = $this->config->getBool('boolKey', 'sales-channel-id');
@@ -80,7 +80,7 @@ class ConfigTest extends TestCase
         $expectedArray = ['val1', 'val2'];
         $this->systemConfigService->expects($this->once())
             ->method('get')
-            ->with(Config::KEY . 'arrayKey', null)
+            ->with('KmhSmsSW.config.arrayKey', null)
             ->willReturn($expectedArray);
 
         $result = $this->config->getArray('arrayKey');
@@ -91,7 +91,7 @@ class ConfigTest extends TestCase
     {
         $this->systemConfigService->expects($this->once())
             ->method('get')
-            ->with(Config::KEY . 'nonArrayKey', null)
+            ->with('KmhSmsSW.config.nonArrayKey', null)
             ->willReturn('not-an-array');
 
         $result = $this->config->getArray('nonArrayKey');

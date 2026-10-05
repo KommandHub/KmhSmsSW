@@ -22,6 +22,7 @@ use Shopware\Core\Content\Flow\Dispatching\StorableFlow;
 use Shopware\Core\Framework\Adapter\Twig\StringTemplateRenderer;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -90,10 +91,11 @@ class SendSmsActionTest extends TestCase
             ->willReturn('+2348000000000');
 
         $template = new SmsTemplateEntity();
+        $template->setId('template-1');
         $template->setActive(true);
         $template->setContent('Hello {{ order.orderNumber }}');
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn($template);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection([$template]));
         $this->templateRepository->method('search')->willReturn($searchResult);
 
         $this->templateRenderer->method('render')->willReturn('Hello 1000');
@@ -121,10 +123,11 @@ class SendSmsActionTest extends TestCase
         $this->phoneResolver->method('resolve')->willReturn('+234999999');
 
         $template = new SmsTemplateEntity();
+        $template->setId('template-1');
         $template->setActive(true);
         $template->setContent('Hi');
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn($template);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection([$template]));
         $this->templateRepository->method('search')->willReturn($searchResult);
         $this->templateRenderer->method('render')->willReturn('Hi');
 
@@ -161,7 +164,7 @@ class SendSmsActionTest extends TestCase
         $this->phoneResolver->method('resolve')->willReturn('+234800');
 
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn(null);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection());
         $this->templateRepository->method('search')->willReturn($searchResult);
 
         $this->logger->expects($this->once())->method('warning')->with($this->stringContains('references a template that no longer exists'));
@@ -176,9 +179,10 @@ class SendSmsActionTest extends TestCase
         $this->phoneResolver->method('resolve')->willReturn('+234800');
 
         $template = new SmsTemplateEntity();
+        $template->setId('template-1');
         $template->setActive(false);
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn($template);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection([$template]));
         $this->templateRepository->method('search')->willReturn($searchResult);
 
         $this->logger->expects($this->once())->method('info')->with($this->stringContains('template is inactive'));
@@ -193,10 +197,11 @@ class SendSmsActionTest extends TestCase
         $this->phoneResolver->method('resolve')->willReturn('+234800');
 
         $template = new SmsTemplateEntity();
+        $template->setId('template-1');
         $template->setActive(true);
         $template->setContent('');
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn($template);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection([$template]));
         $this->templateRepository->method('search')->willReturn($searchResult);
 
         $this->logger->expects($this->once())->method('warning')->with($this->stringContains('template has no content'));
@@ -211,10 +216,11 @@ class SendSmsActionTest extends TestCase
         $this->phoneResolver->method('resolve')->willReturn('+234800');
 
         $template = new SmsTemplateEntity();
+        $template->setId('template-1');
         $template->setActive(true);
         $template->setContent('{{ invalid');
         $searchResult = $this->createMock(EntitySearchResult::class);
-        $searchResult->method('first')->willReturn($template);
+        $searchResult->method('getEntities')->willReturn(new EntityCollection([$template]));
         $this->templateRepository->method('search')->willReturn($searchResult);
 
         $this->templateRenderer->method('render')->willThrowException(new \Exception('Twig error'));

@@ -98,7 +98,7 @@ class DialCodeExtension extends AbstractExtension
         // compliance.
         $criteria = new Criteria([$countryId]);
 
-        $country = $this->countryRepository->search($criteria, $context->getContext())->first();
+        $country = $this->countryRepository->search($criteria, $context->getContext())->getEntities()->first();
 
         return $country instanceof CountryEntity ? $country->getIso() : null;
     }
