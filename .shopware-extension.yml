@@ -1,0 +1,26 @@
+# Read by shopware-cli (`make zip`, `make validate-plugin`).
+compatibility_date: '2026-02-11'
+
+# `make zip` packs the working tree (--disable-git), so anything present
+# locally but ignored by git would ship unless it is listed here: dev
+# dependencies installed for PHPStan/php-cs-fixer, coverage reports, caches.
+# The dev-stack and tooling configs are left out because they only make sense
+# in a checkout of this repository, not in an installed plugin.
+build:
+  zip:
+    pack:
+      excludes:
+        paths:
+          - vendor
+          - build
+          - .phpunit.cache
+          - node_modules
+          - Dockerfile
+          - docker-compose.yml
+          - .dockerignore
+          - .prettierignore
+          - .prettierrc.json
+          - CLAUDE.md
+          - phpcs.dist.xml
+          - phpstan.dist.neon
+          - phpunit.dist.xml
