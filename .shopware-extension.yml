@@ -8,6 +8,12 @@ compatibility_date: '2026-02-11'
 # in a checkout of this repository, not in an installed plugin.
 build:
   zip:
+    # The committed dist/ and public/ bundles are the release assets, built
+    # with Shopware's own build scripts. Letting the CLI rebuild them in a temp
+    # folder ships different files (a chunk named after the temp path, plus a
+    # legacy webpack admin bundle) from the ones in git.
+    assets:
+      enabled: false
     pack:
       excludes:
         paths:
@@ -24,3 +30,6 @@ build:
           - phpcs.dist.xml
           - phpstan.dist.neon
           - phpunit.dist.xml
+          # Written by shopware-cli's asset build, which mistakes this
+          # plugin's src/Storefront namespace folder for the core bundle.
+          - src/Storefront/Resources
