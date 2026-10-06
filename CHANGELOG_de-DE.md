@@ -30,5 +30,10 @@ bevor du einen Storefront umstellst.
 - Ein Kunde ohne verwendbare Mobilnummer wird übersprungen und protokolliert;
   der Rest des Flows, einschließlich der Bestellbestätigungs-E-Mail, läuft
   weiter.
-- Zustellstatus-Webhooks werden empfangen und protokolliert, signaturgeprüft je
-  Verkaufskanal.
+- Zustellberichte von Termii, Twilio und Africa's Talking werden empfangen und
+  protokolliert, jeder Anbieter unter seiner eigenen Webhook-URL und so
+  geprüft, wie dieser Anbieter seine Callbacks signiert. Die Einstellungsseite
+  zeigt die URL, die du im Dashboard des Anbieters einträgst.
+- „Zugangsdaten prüfen" auf der Einstellungskarte jedes Anbieters bestätigt,
+  dass die gespeicherten Zugangsdaten funktionieren, bevor auch nur eine
+  Nachricht versendet wird.

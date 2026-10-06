@@ -30,5 +30,9 @@ test et une audience réduite avant de basculer une boutique.
   gestion des adresses, le paiement et les formulaires CMS.
 - Un client sans numéro mobile utilisable est ignoré et journalisé ; le reste du
   flux, y compris l'e-mail de confirmation de commande, se poursuit.
-- Les webhooks de statut de livraison sont reçus et journalisés, avec
-  vérification de signature par canal de vente.
+- Les rapports de livraison de Termii, Twilio et Africa's Talking sont reçus et
+  journalisés, chaque fournisseur à sa propre URL de webhook et vérifié selon
+  la façon dont ce fournisseur signe ses rappels. La page des paramètres
+  indique l'URL à saisir dans le tableau de bord de chaque fournisseur.
+- « Vérifier les identifiants » sur la carte de chaque fournisseur confirme que
+  les identifiants enregistrés fonctionnent avant l'envoi du moindre message.
