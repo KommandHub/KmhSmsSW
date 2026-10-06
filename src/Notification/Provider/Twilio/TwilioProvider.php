@@ -10,6 +10,12 @@ use Kommandhub\SmsSW\Notification\Provider\AbstractHttpNotificationProvider;
 use Kommandhub\SmsSW\Notification\Provider\Struct\CredentialCheck;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageRequest;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageResult;
+use Kommandhub\SmsSW\Notification\Provider\WebhookProviderInterface;
+use Kommandhub\SmsSW\Webhook\Enum\DeliveryStatus;
+use Kommandhub\SmsSW\Webhook\Event\DeliveryReportEvent;
+use Kommandhub\SmsSW\Webhook\Event\InboundEvent;
+use Kommandhub\SmsSW\Webhook\Event\WebhookEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Twilio — global fallback.
@@ -27,7 +33,7 @@ use Kommandhub\SmsSW\Notification\Provider\Struct\MessageResult;
  * Quirks contained here: HTTP basic auth, a form-encoded body with capitalised
  * field names, and an account SID embedded in the URL path.
  */
-class TwilioProvider extends AbstractHttpNotificationProvider
+class TwilioProvider extends AbstractHttpNotificationProvider implements WebhookProviderInterface
 {
     private const BASE_URL = 'https://api.twilio.com';
 
@@ -127,6 +133,61 @@ class TwilioProvider extends AbstractHttpNotificationProvider
         }
 
         return CredentialCheck::valid('Twilio credentials accepted.');
+    }
+
+    /**
+     * Twilio signs every callback with the account's auth token: HMAC-SHA1
+     * over the exact URL it called followed by each POST field name and value,
+     * sorted by name, base64-encoded in `X-Twilio-Signature`.
+     *
+     * ponytail: the URL is rebuilt from the request, so behind a TLS-terminating
+     * proxy Shopware's trusted-proxy settings must be right or every callback
+     * fails verification.
+     */
+    public function verifyWebhook(Request $request, ?string $salesChannelId = null): bool
+    {
+        $authToken = $this->setting('authToken', $salesChannelId);
+        $signature = (string)$request->headers->get('x-twilio-signature', '');
+
+        if ($authToken === '' || $signature === '') {
+            return false;
+        }
+
+        $params = $request->request->all();
+        ksort($params, \SORT_STRING);
+
+        $data = $request->getSchemeAndHttpHost() . $request->getRequestUri();
+
+        foreach ($params as $name => $value) {
+            $data .= $name . (\is_scalar($value) ? (string)$value : '');
+        }
+
+        return hash_equals(base64_encode(hash_hmac('sha1', $data, $authToken, true)), $signature);
+    }
+
+    /**
+     * A status callback carries `MessageStatus`; an incoming message carries
+     * `Body`. Twilio only sends status callbacks to a messaging service with a
+     * status callback URL configured, or to one set per message.
+     */
+    public function parseWebhook(Request $request, ?string $salesChannelId = null): ?WebhookEvent
+    {
+        $params = $request->request->all();
+        $status = self::stringField($params, 'MessageStatus');
+
+        if ($status !== null) {
+            return new DeliveryReportEvent($this->getName(), self::stringField($params, 'MessageSid'), match ($status) {
+                'delivered', 'read' => DeliveryStatus::Delivered,
+                'undelivered', 'failed', 'canceled' => DeliveryStatus::Failed,
+                default => DeliveryStatus::Pending,
+            }, $status, $params, $salesChannelId);
+        }
+
+        if (isset($params['Body'])) {
+            return new InboundEvent($this->getName(), self::stringField($params, 'From'), self::stringField($params, 'Body'), $params, $salesChannelId);
+        }
+
+        return null;
     }
 
     /**

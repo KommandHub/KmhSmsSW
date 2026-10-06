@@ -4,97 +4,104 @@ declare(strict_types=1);
 
 namespace Kommandhub\SmsSW\Tests\Unit\Webhook\Controller;
 
+use Kommandhub\SmsSW\Notification\Provider\NotificationProviderInterface;
+use Kommandhub\SmsSW\Notification\Provider\NotificationProviderRegistry;
+use Kommandhub\SmsSW\Notification\Provider\WebhookProviderInterface;
 use Kommandhub\SmsSW\Webhook\Controller\WebhookController;
-use Kommandhub\SmsSW\Webhook\Event\WebhookEvent;
-use Kommandhub\SmsSW\Webhook\Service\WebhookEventFactory;
-use Kommandhub\SmsSW\Webhook\Service\WebhookSignatureValidator;
+use Kommandhub\SmsSW\Webhook\Enum\DeliveryStatus;
+use Kommandhub\SmsSW\Webhook\Event\DeliveryReportEvent;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use Shopware\Core\Framework\Routing\RoutingException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\NullLogger;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 #[CoversClass(WebhookController::class)]
+#[UsesClass(NotificationProviderRegistry::class)]
+#[UsesClass(DeliveryReportEvent::class)]
 class WebhookControllerTest extends TestCase
 {
-    private WebhookSignatureValidator&MockObject $signatureValidator;
-    private WebhookEventFactory&MockObject $eventFactory;
-    private EventDispatcherInterface&MockObject $eventDispatcher;
-    private LoggerInterface&MockObject $logger;
-    private WebhookController $controller;
-
-    protected function setUp(): void
+    public function testAVerifiedCallbackIsDispatched(): void
     {
-        $this->signatureValidator = $this->createMock(WebhookSignatureValidator::class);
-        $this->eventFactory = $this->createMock(WebhookEventFactory::class);
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $event = new DeliveryReportEvent('hooked', 'msg-1', DeliveryStatus::Delivered, 'DELIVERED', [], 'sc-1');
+        $dispatcher = new EventDispatcher();
+        $received = [];
+        $dispatcher->addListener(DeliveryReportEvent::class, static function (DeliveryReportEvent $e) use (&$received): void {
+            $received[] = $e;
+        });
 
-        $this->controller = new WebhookController(
-            $this->signatureValidator,
-            $this->eventFactory,
-            $this->eventDispatcher,
-            $this->logger
-        );
+        $provider = $this->webhookProvider(verified: true, event: $event);
+        $response = $this->controller($provider, $dispatcher)->handle('hooked', $this->request());
+
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('{"status":"ok"}', $response->getContent());
+        $this->assertSame([$event], $received);
     }
 
-    public function testHandleDispatchesEventAndReturnsOk(): void
+    public function testTheSalesChannelReachesTheProvider(): void
     {
-        $payload = [
-            'type' => 'outbound',
-            'message_id' => 'msg_123',
-            'status' => 'delivered',
-        ];
+        $provider = $this->webhookProvider(verified: true, event: null);
+        $provider->expects($this->once())->method('verifyWebhook')->with($this->anything(), 'sc-1')->willReturn(true);
 
-        $request = new Request([], [], ['sw-sales-channel-id' => 'sc-123'], [], [], [], json_encode($payload));
-
-        $this->signatureValidator->expects($this->once())
-            ->method('validate')
-            ->with($request, 'sc-123');
-
-        $event = $this->createMock(WebhookEvent::class);
-
-        $this->eventFactory->expects($this->once())
-            ->method('create')
-            ->with('outbound', $payload, 'sc-123')
-            ->willReturn($event);
-
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with($event);
-
-        $response = $this->controller->handle($request);
-
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertStringContainsString('ok', $response->getContent());
+        $this->controller($provider)->handle('hooked', $this->request());
     }
 
-    public function testHandleReturnsIgnoredForUnknownEvent(): void
+    public function testAnUnverifiedCallbackIsRejectedBeforeParsing(): void
     {
-        $payload = ['type' => 'unknown'];
-        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $provider = $this->webhookProvider(verified: false, event: null);
+        $provider->expects($this->never())->method('parseWebhook');
 
-        $this->eventFactory->expects($this->once())
-            ->method('create')
-            ->willReturn(null);
+        $this->expectException(AccessDeniedHttpException::class);
 
-        $this->logger->expects($this->once())
-            ->method('info');
-
-        $response = $this->controller->handle($request);
-
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertStringContainsString('ignored', $response->getContent());
+        $this->controller($provider)->handle('hooked', $this->request());
     }
 
-    public function testHandleThrowsOnInvalidPayload(): void
+    public function testAnIgnoredCallbackIsStillAnswered200(): void
     {
-        $request = new Request([], [], [], [], [], [], 'not-json');
+        $response = $this->controller($this->webhookProvider(verified: true, event: null))->handle('hooked', $this->request());
 
-        $this->expectException(RoutingException::class);
-        $this->controller->handle($request);
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('{"status":"ignored"}', $response->getContent());
+    }
+
+    public function testAProviderWithoutWebhooksIs404(): void
+    {
+        $plain = $this->createMock(NotificationProviderInterface::class);
+        $plain->method('getName')->willReturn('plain');
+
+        $this->expectException(NotFoundHttpException::class);
+
+        (new WebhookController(new NotificationProviderRegistry([$plain]), new EventDispatcher(), new NullLogger()))
+            ->handle('plain', $this->request());
+    }
+
+    public function testAnUnknownProviderIs404(): void
+    {
+        $this->expectException(NotFoundHttpException::class);
+
+        $this->controller($this->webhookProvider(verified: true, event: null))->handle('nobody', $this->request());
+    }
+
+    private function webhookProvider(bool $verified, ?DeliveryReportEvent $event): NotificationProviderInterface&WebhookProviderInterface&\PHPUnit\Framework\MockObject\MockObject
+    {
+        $provider = $this->createMockForIntersectionOfInterfaces([NotificationProviderInterface::class, WebhookProviderInterface::class]);
+        $provider->method('getName')->willReturn('hooked');
+        $provider->method('verifyWebhook')->willReturn($verified);
+        $provider->method('parseWebhook')->willReturn($event);
+
+        return $provider;
+    }
+
+    private function controller(NotificationProviderInterface $provider, ?EventDispatcher $dispatcher = null): WebhookController
+    {
+        return new WebhookController(new NotificationProviderRegistry([$provider]), $dispatcher ?? new EventDispatcher(), new NullLogger());
+    }
+
+    private function request(): Request
+    {
+        return new Request(attributes: ['sw-sales-channel-id' => 'sc-1'], content: '{}');
     }
 }

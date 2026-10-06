@@ -4,66 +4,65 @@ declare(strict_types=1);
 
 namespace Kommandhub\SmsSW\Webhook\Controller;
 
-use Kommandhub\SmsSW\Webhook\Service\WebhookEventFactory;
-use Kommandhub\SmsSW\Webhook\Service\WebhookSignatureValidator;
+use Kommandhub\SmsSW\Notification\Provider\NotificationProviderRegistry;
+use Kommandhub\SmsSW\Notification\Provider\WebhookProviderInterface;
 use Psr\Log\LoggerInterface;
-use Shopware\Core\Framework\Routing\RoutingException;
 use Shopware\Storefront\Controller\StorefrontController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
- * Public endpoint Notifications posts to.
+ * Public endpoint providers post delivery reports and replies to.
  *
- * Deliberately thin, and deliberately generous with 200s: the signature check
- * is the security boundary, and once a request is authentic the provider must
- * be told "received" even if this plugin has nothing to do with the event.
- * Returning 4xx/5xx for an event we simply ignore makes the provider retry it
+ * Knows no vendor: the provider named in the path verifies and parses its own
+ * callback. Deliberately generous with 200s once a request is authentic —
+ * answering 4xx/5xx for an event we simply ignore makes the provider retry it
  * indefinitely.
  *
  * `csrf_protected: false` is required — the caller is a server, not a browser
- * session. `auth_required: false` likewise: authenticity comes from the HMAC.
+ * session. `auth_required: false` likewise: authenticity is the provider's
+ * signature (or token) check.
  */
 #[Route(defaults: ['_routeScope' => ['storefront'], 'csrf_protected' => false, 'auth_required' => false])]
 class WebhookController extends StorefrontController
 {
     public function __construct(
-        private readonly WebhookSignatureValidator $signatureValidator,
-        private readonly WebhookEventFactory $eventFactory,
+        private readonly NotificationProviderRegistry $registry,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly LoggerInterface $logger,
     ) {
     }
 
     #[Route(
-        path: '/notifications/webhook',
+        path: '/kmh-sms/webhook/{providerName}',
         name: 'kmh_sms_webhook',
+        requirements: ['providerName' => '[A-Za-z]+'],
         methods: ['POST'],
     )]
-    public function handle(Request $request): Response
+    public function handle(string $providerName, Request $request): Response
     {
         $salesChannelId = $request->attributes->getString('sw-sales-channel-id') ?: null;
 
-        // Throws AccessDeniedHttpException (403) on anything inauthentic.
-        $this->signatureValidator->validate($request, $salesChannelId);
+        $provider = $this->registry->has($providerName) ? $this->registry->get($providerName) : null;
 
-        $payload = json_decode($request->getContent(), true);
-
-        if (!is_array($payload)) {
-            throw RoutingException::invalidRequestParameter('body');
+        if (!$provider instanceof WebhookProviderInterface) {
+            throw new NotFoundHttpException(sprintf('No webhook for provider "%s".', $providerName));
         }
 
-        // Termii discriminates with `type` ("outbound", "inbound", "dnd"),
-        // not with a dotted event name.
-        $eventType = is_string($payload['type'] ?? null) ? $payload['type'] : '';
-        $event = $this->eventFactory->create($eventType, $payload, $salesChannelId);
+        if (!$provider->verifyWebhook($request, $salesChannelId)) {
+            throw new AccessDeniedHttpException('Webhook could not be verified.');
+        }
+
+        $event = $provider->parseWebhook($request, $salesChannelId);
 
         if ($event === null) {
-            $this->logger->info('Ignoring unhandled Notifications webhook', [
-                'event' => $eventType,
+            $this->logger->info('Ignoring unhandled SMS webhook', [
+                'provider' => $providerName,
                 'salesChannelId' => $salesChannelId,
             ]);
 

@@ -33,6 +33,11 @@
         "placeholderTemplate": "SMS-Vorlage auswählen…"
       },
       "descriptionWithTemplate": "Sendet die SMS-Vorlage „{name}“ an die Mobilnummer des Kunden."
+    },
+    "credentialCheck": {
+      "button": "Zugangsdaten prüfen",
+      "hint": "Prüft die gespeicherten Einstellungen – vorher speichern.",
+      "errorUnexpected": "Die Prüfung konnte nicht abgeschlossen werden. Erneut versuchen oder das Plugin-Log ansehen."
     }
   },
   "sw-privileges": {

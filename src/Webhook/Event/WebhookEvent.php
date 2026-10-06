@@ -7,20 +7,26 @@ namespace Kommandhub\SmsSW\Webhook\Event;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Base class for every inbound Notifications webhook.
+ * Base class for every authenticated provider callback.
  *
- * One subclass per provider event type, each declaring NAME. Subscribers listen
- * on the subclass, so adding an event type never touches existing subscribers.
+ * Provider-neutral: a provider translates its own callback into one of the
+ * subclasses, so subscribers never learn which vendor sent it beyond the name.
  */
 abstract class WebhookEvent extends Event
 {
     /**
-     * @param array<string, mixed> $payload the decoded webhook body
+     * @param array<string, mixed> $payload the callback as the provider sent it
      */
     public function __construct(
+        private readonly string $providerName,
         private readonly array $payload,
         private readonly ?string $salesChannelId = null,
     ) {
+    }
+
+    public function getProviderName(): string
+    {
+        return $this->providerName;
     }
 
     /**
@@ -35,9 +41,4 @@ abstract class WebhookEvent extends Event
     {
         return $this->salesChannelId;
     }
-
-    /**
-     * The provider's event-type string, e.g. "charge.success".
-     */
-    abstract public static function getEventName(): string;
 }

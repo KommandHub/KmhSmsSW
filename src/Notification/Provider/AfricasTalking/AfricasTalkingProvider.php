@@ -10,6 +10,12 @@ use Kommandhub\SmsSW\Notification\Provider\AbstractHttpNotificationProvider;
 use Kommandhub\SmsSW\Notification\Provider\Struct\CredentialCheck;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageRequest;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageResult;
+use Kommandhub\SmsSW\Notification\Provider\WebhookProviderInterface;
+use Kommandhub\SmsSW\Webhook\Enum\DeliveryStatus;
+use Kommandhub\SmsSW\Webhook\Event\DeliveryReportEvent;
+use Kommandhub\SmsSW\Webhook\Event\InboundEvent;
+use Kommandhub\SmsSW\Webhook\Event\WebhookEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Africa's Talking — East Africa, direct carrier routing.
@@ -27,7 +33,7 @@ use Kommandhub\SmsSW\Notification\Provider\Struct\MessageResult;
  * A per-recipient status is nested in the response, so unlike a plain HTTP
  * error a rejection can arrive inside a 201.
  */
-class AfricasTalkingProvider extends AbstractHttpNotificationProvider
+class AfricasTalkingProvider extends AbstractHttpNotificationProvider implements WebhookProviderInterface
 {
     private const BASE_URL_LIVE = 'https://api.africastalking.com';
 
@@ -138,6 +144,42 @@ class AfricasTalkingProvider extends AbstractHttpNotificationProvider
         }
 
         return CredentialCheck::valid(sprintf("Africa's Talking credentials accepted. Balance: %s", $balance));
+    }
+
+    /**
+     * Africa's Talking does not sign its callbacks, so the merchant appends a
+     * shared token to the callback URL they enter in the dashboard
+     * (`…/kmh-sms/webhook/africasTalking?token=…`).
+     */
+    public function verifyWebhook(Request $request, ?string $salesChannelId = null): bool
+    {
+        $token = $this->setting('webhookToken', $salesChannelId);
+
+        return $token !== '' && hash_equals($token, (string)$request->query->get('token', ''));
+    }
+
+    /**
+     * A delivery report carries `status`; an incoming message carries `text`.
+     * Both are form-encoded.
+     */
+    public function parseWebhook(Request $request, ?string $salesChannelId = null): ?WebhookEvent
+    {
+        $params = $request->request->all();
+        $status = self::stringField($params, 'status');
+
+        if ($status !== null) {
+            return new DeliveryReportEvent($this->getName(), self::stringField($params, 'id'), match ($status) {
+                'Success' => DeliveryStatus::Delivered,
+                'Failed', 'Rejected', 'AbsentSubscriber', 'Expired' => DeliveryStatus::Failed,
+                default => DeliveryStatus::Pending,
+            }, $status, $params, $salesChannelId);
+        }
+
+        if (isset($params['text'])) {
+            return new InboundEvent($this->getName(), self::stringField($params, 'from'), self::stringField($params, 'text'), $params, $salesChannelId);
+        }
+
+        return null;
     }
 
     /**

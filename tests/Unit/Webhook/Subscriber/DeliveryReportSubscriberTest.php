@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Kommandhub\SmsSW\Tests\Unit\Webhook\Subscriber;
 
+use Kommandhub\SmsSW\Webhook\Enum\DeliveryStatus;
 use Kommandhub\SmsSW\Webhook\Event\DeliveryReportEvent;
+use Kommandhub\SmsSW\Webhook\Event\WebhookEvent;
 use Kommandhub\SmsSW\Webhook\Subscriber\DeliveryReportSubscriber;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
-use Kommandhub\SmsSW\Webhook\Event\WebhookEvent;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
@@ -18,57 +18,25 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(WebhookEvent::class)]
 class DeliveryReportSubscriberTest extends TestCase
 {
-    private LoggerInterface&MockObject $logger;
-    private DeliveryReportSubscriber $subscriber;
-
-    protected function setUp(): void
+    public function testItListensForDeliveryReports(): void
     {
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->subscriber = new DeliveryReportSubscriber($this->logger);
+        $this->assertSame(['onDeliveryReport'], array_values(DeliveryReportSubscriber::getSubscribedEvents()));
+        $this->assertArrayHasKey(DeliveryReportEvent::class, DeliveryReportSubscriber::getSubscribedEvents());
     }
 
-    public function testGetSubscribedEvents(): void
+    public function testItLogsTheNeutralAndTheProviderStatus(): void
     {
-        $events = DeliveryReportSubscriber::getSubscribedEvents();
-        $this->assertArrayHasKey(DeliveryReportEvent::class, $events);
-        $this->assertEquals('onDeliveryReport', $events[DeliveryReportEvent::class]);
-    }
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('info')->with('Notification delivery report received', [
+            'provider' => 'twilio',
+            'messageId' => 'SM1',
+            'status' => 'failed',
+            'providerStatus' => 'undelivered',
+            'salesChannelId' => 'sc-1',
+        ]);
 
-    public function testOnDeliveryReportLogsInfo(): void
-    {
-        $event = new DeliveryReportEvent([
-            'message_id' => 'msg_123',
-            'status' => 'DELIVERED',
-        ], 'sc-123');
-
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with(
-                $this->stringContains('Notification delivery report received'),
-                $this->callback(function (array $context) {
-                    return $context['messageId'] === 'msg_123'
-                        && $context['status'] === 'DELIVERED'
-                        && $context['salesChannelId'] === 'sc-123';
-                })
-            );
-
-        $this->subscriber->onDeliveryReport($event);
-    }
-    public function testOnDeliveryReportLogsInfoWithMissingData(): void
-    {
-        $event = new DeliveryReportEvent([], null);
-
-        $this->logger->expects($this->once())
-            ->method('info')
-            ->with(
-                $this->stringContains('Notification delivery report received'),
-                $this->callback(function (array $context) {
-                    return $context['messageId'] === null
-                        && $context['status'] === null
-                        && $context['salesChannelId'] === null;
-                })
-            );
-
-        $this->subscriber->onDeliveryReport($event);
+        (new DeliveryReportSubscriber($logger))->onDeliveryReport(
+            new DeliveryReportEvent('twilio', 'SM1', DeliveryStatus::Failed, 'undelivered', [], 'sc-1'),
+        );
     }
 }

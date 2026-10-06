@@ -10,6 +10,12 @@ use Kommandhub\SmsSW\Notification\Provider\AbstractHttpNotificationProvider;
 use Kommandhub\SmsSW\Notification\Provider\Struct\CredentialCheck;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageRequest;
 use Kommandhub\SmsSW\Notification\Provider\Struct\MessageResult;
+use Kommandhub\SmsSW\Notification\Provider\WebhookProviderInterface;
+use Kommandhub\SmsSW\Webhook\Enum\DeliveryStatus;
+use Kommandhub\SmsSW\Webhook\Event\DeliveryReportEvent;
+use Kommandhub\SmsSW\Webhook\Event\InboundEvent;
+use Kommandhub\SmsSW\Webhook\Event\WebhookEvent;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Termii — West Africa, Nigeria-first, direct carrier routing.
@@ -29,7 +35,7 @@ use Kommandhub\SmsSW\Notification\Provider\Struct\MessageResult;
  * JSON body rather than a header, and a refusal is reported as HTTP 200 with an
  * error body and no message id.
  */
-class TermiiProvider extends AbstractHttpNotificationProvider
+class TermiiProvider extends AbstractHttpNotificationProvider implements WebhookProviderInterface
 {
     private const DEFAULT_BASE_URL = 'https://v3.api.termii.com';
 
@@ -122,6 +128,66 @@ class TermiiProvider extends AbstractHttpNotificationProvider
      * route every SMS over WhatsApp, so it is ignored rather than trusted.
      * The config carry-over migration drops it too; this is the second guard.
      */
+    /**
+     * Termii signs the raw body with HMAC-SHA512 using the account's secret
+     * key and sends the hex digest in `X-Termii-Signature`.
+     */
+    public function verifyWebhook(Request $request, ?string $salesChannelId = null): bool
+    {
+        $secret = $this->setting('webhookSecret', $salesChannelId);
+        $signature = (string)$request->headers->get('x-termii-signature', '');
+
+        if ($secret === '' || $signature === '') {
+            return false;
+        }
+
+        return hash_equals(hash_hmac('sha512', $request->getContent(), $secret), $signature);
+    }
+
+    /**
+     * Termii discriminates its callbacks with `type`: "outbound" is a delivery
+     * report, "dnd" means the number is on Nigeria's do-not-disturb list and the
+     * standard route could not reach it, "inbound" is a reply.
+     */
+    public function parseWebhook(Request $request, ?string $salesChannelId = null): ?WebhookEvent
+    {
+        $payload = json_decode($request->getContent(), true);
+
+        if (!\is_array($payload)) {
+            return null;
+        }
+
+        $status = self::stringField($payload, 'status');
+
+        return match ($payload['type'] ?? null) {
+            'outbound' => new DeliveryReportEvent($this->getName(), self::stringField($payload, 'message_id'), self::deliveryStatus($status), $status, $payload, $salesChannelId),
+            'dnd' => new DeliveryReportEvent($this->getName(), self::stringField($payload, 'message_id'), DeliveryStatus::Failed, $status ?? 'dnd', $payload, $salesChannelId),
+            // ponytail: Termii's inbound field names are not documented
+            // reliably; sender and text stay null until verified against a live
+            // callback. The payload carries everything.
+            'inbound' => new InboundEvent($this->getName(), null, null, $payload, $salesChannelId),
+            default => null,
+        };
+    }
+
+    /**
+     * Termii's statuses are free-text ("DELIVERED", "Message Failed",
+     * "Rejected", "Expired", "DND Active on Phone Number", …), so match on the
+     * meaningful word. Failure words first: "undelivered" contains "deliver".
+     */
+    private static function deliveryStatus(?string $status): DeliveryStatus
+    {
+        $status = strtolower((string)$status);
+
+        foreach (['undeliver', 'fail', 'reject', 'expire', 'dnd'] as $word) {
+            if (str_contains($status, $word)) {
+                return DeliveryStatus::Failed;
+            }
+        }
+
+        return str_contains($status, 'deliver') ? DeliveryStatus::Delivered : DeliveryStatus::Pending;
+    }
+
     private function route(?string $salesChannelId): string
     {
         $configured = $this->setting('route', $salesChannelId);

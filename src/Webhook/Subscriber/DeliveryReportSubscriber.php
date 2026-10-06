@@ -11,7 +11,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Records what actually happened to a message after the provider accepted it.
  *
- * "Accepted by Termii" and "arrived on the handset" are different facts, and
+ * "Accepted by the provider" and "arrived on the handset" are different facts, and
  * only the delivery report carries the second one. Without this, a merchant
  * asking "did the customer get it?" has nothing to look at.
  *
@@ -36,8 +36,10 @@ class DeliveryReportSubscriber implements EventSubscriberInterface
     public function onDeliveryReport(DeliveryReportEvent $event): void
     {
         $this->logger->info('Notification delivery report received', [
+            'provider' => $event->getProviderName(),
             'messageId' => $event->getMessageId(),
-            'status' => $event->getStatus(),
+            'status' => $event->getStatus()->value,
+            'providerStatus' => $event->getProviderStatus(),
             'salesChannelId' => $event->getSalesChannelId(),
         ]);
     }

@@ -11,11 +11,13 @@ import './acl';
 import './init/flow-builder.init';
 
 import './component/kmh-test-message-modal';
+import './component/kmh-sms-credential-check';
 import './component/sw-flow-kmh-send-sms-modal';
 
 import './module/sms-template';
 
 import TestMessageApiService from './service/test-message.api.service';
+import NotificationProviderApiService from './service/notification-provider.api.service';
 
 // Registered once for the whole plugin: every channel's detail page injects the
 // same service rather than each module defining its own.
@@ -23,4 +25,10 @@ Shopware.Application.addServiceProvider('testMessageApiService', (container) => 
     const initContainer = Shopware.Application.getContainer('init');
 
     return new TestMessageApiService(initContainer.httpClient, container.loginService);
+});
+
+Shopware.Application.addServiceProvider('notificationProviderApiService', (container) => {
+    const initContainer = Shopware.Application.getContainer('init');
+
+    return new NotificationProviderApiService(initContainer.httpClient, container.loginService);
 });
