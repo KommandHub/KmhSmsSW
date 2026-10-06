@@ -24,8 +24,12 @@ sender and a small audience before switching a storefront over.
   Works across registration, address management, checkout and CMS forms.
 - A customer with no usable mobile number is skipped and logged; the rest of the
   flow, including the order-confirmation email, still runs.
-- Delivery-status webhooks are received and logged, signature-verified per sales
-  channel.
+- Delivery reports from Termii, Twilio and Africa's Talking are received and
+  logged, each provider at its own webhook URL and verified the way that
+  provider signs its callbacks. The settings page shows the URL to enter in
+  each provider's dashboard.
+- "Check credentials" on each provider's settings card confirms the saved
+  credentials work before a single message is sent.
 
 <!--
 Format notes (this file is rendered by the Shopware Store):
