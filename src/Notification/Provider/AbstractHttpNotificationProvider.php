@@ -139,6 +139,18 @@ abstract class AbstractHttpNotificationProvider implements NotificationProviderI
     }
 
     /**
+     * A string field out of a decoded body or callback, or null.
+     *
+     * @param array<array-key, mixed> $data
+     */
+    protected static function stringField(array $data, string $key): ?string
+    {
+        $value = $data[$key] ?? null;
+
+        return \is_scalar($value) && (string)$value !== '' ? (string)$value : null;
+    }
+
+    /**
      * Best-effort human reason out of a provider error body.
      *
      * @param array<string, mixed> $decoded

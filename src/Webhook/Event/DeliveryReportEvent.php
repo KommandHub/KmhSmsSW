@@ -4,41 +4,47 @@ declare(strict_types=1);
 
 namespace Kommandhub\SmsSW\Webhook\Event;
 
+use Kommandhub\SmsSW\Webhook\Enum\DeliveryStatus;
+
 /**
- * Termii delivery report for a message this plugin sent.
- *
- * The provider discriminates its callbacks with a `type` field rather than an
- * `event` name, and `outbound` is the one carrying delivery status.
+ * What happened to a message after the provider accepted it.
  */
 class DeliveryReportEvent extends WebhookEvent
 {
-    public static function getEventName(): string
-    {
-        return 'outbound';
-    }
-
     /**
-     * Provider status, e.g. DELIVERED / Message Failed / Expired / Rejected.
-     *
-     * Deliberately not mapped onto an enum: the vocabulary belongs to the
-     * provider and differs per gateway. Verify the exact strings against
-     * current Termii documentation before branching on them.
+     * @param array<string, mixed> $payload
      */
-    public function getStatus(): ?string
-    {
-        $status = $this->getPayload()['status'] ?? null;
-
-        return \is_string($status) ? $status : null;
+    public function __construct(
+        string $providerName,
+        private readonly ?string $messageId,
+        private readonly DeliveryStatus $status,
+        private readonly ?string $providerStatus,
+        array $payload,
+        ?string $salesChannelId = null,
+    ) {
+        parent::__construct($providerName, $payload, $salesChannelId);
     }
 
     /**
-     * Correlates back to the id the sending provider returned. Which provider that
-     * was is recorded on the send log line alongside this id.
+     * Correlates back to the id the provider returned when the message was
+     * sent, which the send log line records.
      */
     public function getMessageId(): ?string
     {
-        $messageId = $this->getPayload()['message_id'] ?? null;
+        return $this->messageId;
+    }
 
-        return \is_string($messageId) ? $messageId : null;
+    public function getStatus(): DeliveryStatus
+    {
+        return $this->status;
+    }
+
+    /**
+     * The provider's own word for the status, e.g. "undelivered" — kept for
+     * support, never for branching.
+     */
+    public function getProviderStatus(): ?string
+    {
+        return $this->providerStatus;
     }
 }

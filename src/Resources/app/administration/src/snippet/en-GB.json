@@ -33,6 +33,11 @@
         "placeholderTemplate": "Select an SMS template…"
       },
       "descriptionWithTemplate": "Sends the SMS template \"{name}\" to the customer's mobile number."
+    },
+    "credentialCheck": {
+      "button": "Check credentials",
+      "hint": "Uses the saved settings — save first.",
+      "errorUnexpected": "The check could not be completed. Try again, or see the plugin log."
     }
   },
   "sw-privileges": {

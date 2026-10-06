@@ -3,24 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/6.7/src/Core/System/SystemConfig/Schema/config.xsd">
 
     <card>
-        <title>Delivery webhook</title>
-        <title lang="de-DE">Zustellungs-Webhook</title>
-
-        <input-field type="password">
-            <name>webhookSecret</name>
-            <label>Webhook signing secret</label>
-            <label lang="de-DE">Webhook-Signaturschlüssel</label>
-            <helpText>
-                The secret your provider signs delivery reports with, posted to
-                /notifications/webhook. For Termii this is its API key. Inbound
-                webhooks are rejected while this is empty.
-            </helpText>
-            <copyable>true</copyable>
-        </input-field>
-    </card>
-
-
-    <card>
         <title>SMS routing</title>
         <title lang="de-DE">SMS-Routing</title>
 
@@ -110,6 +92,23 @@
                 if Termii assigned your account a different regional host.
             </helpText>
         </input-field>
+        <input-field type="password">
+            <name>termiiWebhookSecret</name>
+            <label>Webhook secret key</label>
+            <label lang="de-DE">Webhook-Geheimschlüssel</label>
+            <helpText>
+                The secret key from your Termii dashboard, which Termii signs
+                delivery reports with. Set the webhook URL in Termii to
+                https://your-shop/kmh-sms/webhook/termii. Reports are rejected
+                while this is empty.
+            </helpText>
+            <copyable>true</copyable>
+        </input-field>
+
+        <component name="kmh-sms-credential-check">
+            <name>termiiCredentialCheck</name>
+            <provider>termii</provider>
+        </component>
     </card>
 
 
@@ -146,6 +145,10 @@
                 Sendexa assigned your account a different host.
             </helpText>
         </input-field>
+        <component name="kmh-sms-credential-check">
+            <name>sendexaCredentialCheck</name>
+            <provider>sendexa</provider>
+        </component>
     </card>
 
 
@@ -178,6 +181,24 @@
                 Optional. Leave empty to send from the shared sender pool.
             </helpText>
         </input-field>
+        <input-field type="password">
+            <name>africasTalkingWebhookToken</name>
+            <label>Webhook token</label>
+            <label lang="de-DE">Webhook-Token</label>
+            <helpText>
+                Africa's Talking does not sign its callbacks, so pick a long
+                random value here and enter the delivery-report URL in the
+                Africa's Talking dashboard as
+                https://your-shop/kmh-sms/webhook/africasTalking?token=YOUR_TOKEN.
+                Reports are rejected while this is empty.
+            </helpText>
+            <copyable>true</copyable>
+        </input-field>
+
+        <component name="kmh-sms-credential-check">
+            <name>africasTalkingCredentialCheck</name>
+            <provider>africasTalking</provider>
+        </component>
     </card>
 
 
@@ -210,8 +231,16 @@
             <helpText>
                 Optional. Starts with "MG". If set, it replaces the sending
                 number and Twilio picks the sender from that service's pool.
+                Delivery reports need a messaging service: set its status
+                callback URL in Twilio to
+                https://your-shop/kmh-sms/webhook/twilio. Callbacks are
+                verified with the auth token above.
             </helpText>
         </input-field>
+        <component name="kmh-sms-credential-check">
+            <name>twilioCredentialCheck</name>
+            <provider>twilio</provider>
+        </component>
     </card>
 
 

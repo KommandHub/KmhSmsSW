@@ -33,6 +33,11 @@
         "noProviderConfigured": "Aucun fournisseur n'est encore configuré pour ce canal, rien n'a été envoyé. Configure-en un dans les réglages du plugin.",
         "errorUnexpected": "Le message de test n'a pas pu être envoyé."
       }
+    },
+    "credentialCheck": {
+      "button": "Vérifier les identifiants",
+      "hint": "Utilise les paramètres enregistrés — enregistrez d’abord.",
+      "errorUnexpected": "La vérification n’a pas pu aboutir. Réessayez ou consultez le journal du plugin."
     }
   },
   "sw-privileges": {

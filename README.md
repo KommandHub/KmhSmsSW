@@ -194,13 +194,25 @@ Built output under `src/Resources/app/storefront/dist/` is generated.
 
 ### Webhooks
 
-`POST /notifications/webhook` — public, unauthenticated, HMAC-verified.
+`POST /kmh-sms/webhook/{providerName}` — public, unauthenticated, verified by
+the provider named in the path.
 
-1. `WebhookSignatureValidator` rejects anything inauthentic (403). This is the
-   security boundary; everything downstream trusts the payload.
-2. `WebhookEventFactory` maps the provider's event string to a typed event.
-   Unknown types are logged and answered **200** so the provider stops retrying.
-3. The event is dispatched; subscribers under `Webhook/Subscriber/` do the work.
+1. The controller resolves the provider from the registry. A provider that does
+   not implement `WebhookProviderInterface` answers **404**.
+2. `verifyWebhook()` checks the provider's own signature or token and rejects
+   anything inauthentic (**403**). This is the security boundary; everything
+   downstream trusts the payload.
+3. `parseWebhook()` turns the callback into a provider-neutral
+   `DeliveryReportEvent` or `InboundEvent`. A callback the plugin has no use
+   for is logged and answered **200** so the provider stops retrying.
+4. The event is dispatched; subscribers under `Webhook/Subscriber/` do the work.
+
+| Provider | URL path | Verified with |
+|---|---|---|
+| Termii | `/kmh-sms/webhook/termii` | `X-Termii-Signature`, HMAC-SHA512 with the webhook secret key |
+| Twilio | `/kmh-sms/webhook/twilio` | `X-Twilio-Signature`, HMAC-SHA1 with the auth token (messaging service status callback) |
+| Africa's Talking | `/kmh-sms/webhook/africasTalking?token=…` | the webhook token setting (the vendor does not sign callbacks) |
+| Sendexa | — | no delivery callbacks supported |
 
 Register the URL in the provider's dashboard per sales channel domain.
 
